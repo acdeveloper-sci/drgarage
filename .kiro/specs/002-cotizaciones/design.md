@@ -141,12 +141,13 @@ Hola {primerNombre}, en Taller Don Ramiro encontramos una reparación adicional 
 
 ### 2.4 Descripción del estado para el cliente (`lib/dominio/estados.ts`)
 
-El feature 01 usaba para "Cotización enviada" un texto que pedía responder por WhatsApp, porque aprobar aún no existía. Con este feature la descripción depende de si hay una cotización pendiente:
+El feature 01 usaba para "Cotización enviada" un texto que pedía responder por WhatsApp, porque aprobar aún no existía. Con este feature la descripción depende de la cotización más reciente del auto (`AutoPublico.cotizacion`, que nunca es una anulada):
 
-- **Con cotización pendiente:** "Hay una reparación adicional esperando tu aprobación." (texto del prototipo).
-- **Sin cotización pendiente** (ya decidida, o estado puesto a mano): "El taller está revisando una reparación adicional para tu vehículo." No pide aprobar nada.
+- **Pendiente:** "Hay una reparación adicional esperando tu aprobación." (texto del prototipo).
+- **Ya decidida** (aprobada o rechazada): "Recibimos tu respuesta sobre la reparación adicional."
+- **Sin cotización** (estado puesto a mano): el texto del feature 01, "Te enviamos una cotización por una reparación adicional. Respóndenos por WhatsApp."
 
-Se expone como `descripcionEstado(estado, hayCotizacionPendiente)`; los demás estados conservan los textos del feature 01.
+Se expone como `descripcionEstado(estado, estadoCotizacion?)`; los demás estados conservan los textos del feature 01.
 
 ## 3. Acceso a datos (`lib/supabase/consultas.ts`)
 
@@ -208,7 +209,7 @@ El historial muestra también las cotizaciones anuladas, y `styles/components.cs
 
 ### 7.1 Página
 
-Debajo del Stepper muestra la cotización de `AutoPublico.cotizacion`, si existe. La descripción del estado usa `descripcionEstado` (sección 2.4) con `cotizacion?.estado === 'pendiente'`. Solo se muestra esa cotización, no la lista "Tus respuestas" del prototipo (ver sección 14).
+Debajo del Stepper muestra la cotización de `AutoPublico.cotizacion`, si existe. La descripción del estado usa `descripcionEstado` (sección 2.4) con `cotizacion?.estado`. Solo se muestra esa cotización, no la lista "Tus respuestas" del prototipo (ver sección 14).
 
 ### 7.2 Componente `DecisionCotizacion.tsx` (componente de cliente)
 
@@ -265,7 +266,7 @@ El valor llega cuando el cliente decide:
   - `ATAJOS_NOTA`: tres opciones, con tildes.
 - `lib/dominio/mensajes.test.ts`: texto exacto de la plantilla de cotización, con tildes, ñ y `&`, costo `$380.000`, codificación y prefijo 57.
 - `lib/dominio/transformaciones.test.ts`: `AutoPublico` con cotización nunca trae WhatsApp, `auto_id` ni nota.
-- `lib/dominio/estados.test.ts`: `descripcionEstado` da el texto del prototipo para "Cotización enviada" con cotización pendiente, un texto que no pide aprobar sin ella, y los textos del feature 01 para los demás estados.
+- `lib/dominio/estados.test.ts`: `descripcionEstado` da, para "Cotización enviada", el texto del prototipo con cotización pendiente, "Recibimos tu respuesta…" con una decidida y el texto del feature 01 sin cotización; los demás estados conservan los textos del feature 01.
 - La verificación final incluye las pruebas del feature 01 y la comprobación a 390 px contra las capturas 08 a 12.
 
 ## 14. Desviaciones deliberadas del prototipo

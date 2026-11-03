@@ -30,7 +30,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
   - **Criterio(s)**: Requisitos 1.1, 1.2, 5.1
   - Crear `supabase/migrations/004_create_cotizaciones.sql` con el SQL de la sección 1.1 del diseño: tabla con `decidida_en`, llave foránea a `autos(id)` sin `on delete cascade`, restricciones de integridad (una cotización decidida siempre tiene `decidida_en`; la nota solo existe si fue rechazada y tiene máximo 140 caracteres), índice único parcial por auto con cotización pendiente, índice `(auto_id, enviada_en desc)` y RLS activado sin políticas.
 
-- [!] 1.2 Aplicar la migración en Supabase (paso manual de la persona)
+- [x] 1.2 Aplicar la migración en Supabase (paso manual de la persona)
   - **Criterio(s)**: Requisitos 1 a 5
   - La persona ejecuta `004_create_cotizaciones.sql` en el SQL Editor de Supabase y confirma que la tabla `cotizaciones` existe con RLS activado. El agente pide este paso, la marca como bloqueada `[!]` mientras espera la confirmación y no continúa con la sección 3 sin ella.
 
@@ -58,7 +58,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 - [x] 2.6 Descripción del estado según la cotización
   - **Criterio(s)**: Requisitos 3.1, 4.1
-  - En `lib/dominio/estados.ts`, `descripcionEstado(estado, hayCotizacionPendiente)` como en la sección 2.4 del diseño: para "Cotización enviada", con pendiente "Hay una reparación adicional esperando tu aprobación." y sin ella "El taller está revisando una reparación adicional para tu vehículo."; los demás estados conservan los textos del feature 01.
+  - En `lib/dominio/estados.ts`, `descripcionEstado(estado, estadoCotizacion?)` como en la sección 2.4 del diseño: para "Cotización enviada", con pendiente "Hay una reparación adicional esperando tu aprobación.", con una decidida "Recibimos tu respuesta sobre la reparación adicional." y sin cotización el texto del feature 01; los demás estados conservan los textos del feature 01.
 
 ### 3. Acceso a datos
 
@@ -162,7 +162,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 - [ ] 8.5 Pruebas de la descripción del estado
   - **Criterio(s)**: Requisitos 3.1, 4.1
-  - `lib/dominio/estados.test.ts`: `descripcionEstado` da el texto del prototipo para "Cotización enviada" con cotización pendiente, un texto que no pide aprobar sin ella, y los textos del feature 01 para los demás estados.
+  - `lib/dominio/estados.test.ts`: `descripcionEstado` da, para "Cotización enviada", el texto del prototipo con cotización pendiente, "Recibimos tu respuesta…" con una decidida y el texto del feature 01 sin cotización; los demás estados conservan los textos del feature 01.
 
 ### 9. Verificación
 
