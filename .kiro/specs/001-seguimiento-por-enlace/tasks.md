@@ -36,19 +36,19 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 ### 1. Infraestructura de Base de Datos
 
-- [ ] 1.1 Crear migración para tabla `autos`
+- [x] 1.1 Crear migración para tabla `autos`
   - **Criterio(s)**: Requisito 1.1
   - Crear archivo `supabase/migrations/001_create_autos.sql` con columnas: id (uuid PK), token_publico (text UNIQUE NOT NULL), nombre_cliente (text NOT NULL), whatsapp (text NOT NULL), placa (text NOT NULL), modelo (text NOT NULL), problema (text nullable), estado (text NOT NULL default 'recibido'), creado_en (timestamptz), actualizado_en (timestamptz). CHECK constraint para estados válidos.
 
-- [ ] 1.2 Crear migración para tabla `eventos`
+- [x] 1.2 Crear migración para tabla `eventos`
   - **Criterio(s)**: Requisito 2.1
   - Crear archivo `supabase/migrations/002_create_eventos.sql` con columnas: id (uuid PK), auto_id (uuid FK → autos.id), tipo (text NOT NULL), descripcion (text NOT NULL), creado_en (timestamptz). Foreign key con restricción de integridad referencial.
 
-- [ ] 1.3 Configurar RLS y seguridad
+- [x] 1.3 Configurar RLS y seguridad
   - **Criterio(s)**: Requisito 4.2
   - Activar RLS en ambas tablas. Sin políticas para rol anónimo (acceso solo desde servidor). Crear índice en `autos.token_publico` y `eventos.auto_id`.
 
-- [ ] 1.4 Aplicar las migraciones en Supabase (paso manual de la persona)
+- [!] 1.4 Aplicar las migraciones en Supabase (paso manual de la persona)
   - **Criterio(s)**: Requisitos 1.1, 2.1, 4.2
   - La persona ejecuta en orden los archivos de `supabase/migrations/` en el SQL Editor del proyecto Supabase y confirma que las tablas `autos` y `eventos` existen con RLS activado. El agente pide este paso, la marca como bloqueada `[!]` mientras espera la confirmación y no continúa con la sección 3 sin ella.
 
