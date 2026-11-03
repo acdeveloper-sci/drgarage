@@ -143,3 +143,5 @@ a.dr-card:active{border-color:var(--ink)}
 .dr-item__num{flex:none;width:var(--touch-min);height:var(--touch-min);border-radius:var(--radius-pill);background:var(--ink);color:var(--on-ink);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800}
 .dr-cita{margin:0;font-size:19px;font-weight:700;line-height:1.35}
 .dr-item h2,.dr-item h3,.dr-item p,figure.dr-panel{margin:0}
+.dr-fila{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2)}
+.dr-item .dr-fila,.dr-item .dr-quote-note{margin-top:var(--space-2)}
