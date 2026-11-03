@@ -18,7 +18,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 Lee, en este orden:
 
 1. `.kiro/steering/product.md`, `.kiro/steering/tech.md` y `.kiro/steering/structure.md` (producto, decisiones técnicas y estructura). Si tu herramienta ya los cargó, no los repitas.
-2. La spec del feature en curso: `.kiro/specs/001-seguimiento-por-enlace/` (`requirements.md`, `design.md`, `tasks.md`).
+2. La spec del feature en curso: la carpeta con el número más alto de `.kiro/specs/` (`requirements.md`, `design.md`, `tasks.md`).
 3. Para toda la interfaz, la skill `marca-drgarage` (`.kiro/skills/marca-drgarage/SKILL.md`; en Claude Code, `.claude/skills/marca-drgarage/`).
 
 ## Fuentes de verdad

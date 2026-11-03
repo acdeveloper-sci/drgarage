@@ -1,6 +1,6 @@
 # Producto — drGarage
 
-> **Nota**: para el feature en curso, usa la spec de `.kiro/specs/001-seguimiento-por-enlace/`. El archivo `docs/especificacion.md` es referencia del MVP completo, no un encargo individual.
+> **Nota**: para el feature en curso, usa la spec de la carpeta con el número más alto de la carpeta `.kiro/specs/`. El archivo `docs/especificacion.md` es referencia del MVP completo, no un encargo individual.
 
 ## Qué es drGarage
 
