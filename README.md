@@ -39,6 +39,17 @@ Next.js 16 (App Router), TypeScript, Supabase (Postgres, server-only access), Vi
 
 Spec-driven: steering in `.kiro/steering/`, feature spec in `.kiro/specs/001-seguimiento-por-enlace/` (requirements, design, tasks), implemented with Claude Code following `AGENTS.md`. The visual design in `design/` (tokens, components, prototype and screens) was made with Claude Design. Brand rules: `.kiro/skills/marca-drgarage/`.
 
+## Repository layout
+
+| Area | Location |
+|---|---|
+| Persistent agent context | `AGENTS.md` (root), `CLAUDE.md`, `.kiro/steering/` |
+| Feature spec: problem, solution design, 5 acceptance criteria | `docs/specs-entrada/001-seguimiento-por-enlace.md` |
+| Expanded spec (requirements, design, tasks) | `.kiro/specs/001-seguimiento-por-enlace/` |
+| Brand design skill | `.kiro/skills/marca-drgarage/` (Claude Code stub in `.claude/skills/`) |
+| Implementation | `app/`, `components/`, `lib/`, `supabase/migrations/`; tests in `lib/dominio/*.test.ts` |
+| Spec change history | `git log --oneline -- .kiro/specs` |
+
 ## Known limits
 
 - No access control on the shop view; Server Actions can be called directly.
