@@ -24,7 +24,7 @@ export interface AutoPublico {
   actualizadoEn: Date;
 }
 
-export type TipoEvento = "cambio_estado" | "aviso_enviado";
+export type TipoEvento = "ingreso" | "cambio_estado" | "aviso_enviado";
 
 export interface Evento {
   id: string;

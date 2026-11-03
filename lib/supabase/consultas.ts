@@ -45,7 +45,7 @@ interface FilaEvento {
 }
 
 function aEvento(fila: FilaEvento): Evento {
-  if (fila.tipo !== "cambio_estado" && fila.tipo !== "aviso_enviado") {
+  if (fila.tipo !== "ingreso" && fila.tipo !== "cambio_estado" && fila.tipo !== "aviso_enviado") {
     throw new Error(`Tipo de evento desconocido en la base de datos: ${fila.tipo}`);
   }
   return {

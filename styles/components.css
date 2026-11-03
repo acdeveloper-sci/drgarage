@@ -1,7 +1,9 @@
 /* Taller Don Ramiro — clases de componentes. Todo color/medida sale de tokens.css (var(--token)). */
 .dr-app{font-family:var(--font-sans);color:var(--ink);background:var(--ground);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent}
 .dr-app *,.dr-app *::before,.dr-app *::after{box-sizing:border-box}
-.dr-app button,.dr-app input,.dr-app textarea,.dr-app select{font-family:inherit;color:inherit}
+/* Difiere de design/design-system/components.css: con :where() el reinicio no le gana en especificidad
+   a las variantes (.dr-btn--primary, .dr-iconbtn), que si no quedan con texto ink sobre fondo oscuro. */
+.dr-app :where(button,input,textarea,select){font-family:inherit;color:inherit}
 .dr-app :focus-visible{outline:none;box-shadow:var(--focus-ring)}
 
 /* Button — botones grandes de acción */
@@ -89,3 +91,23 @@ button.dr-card:active{border-color:var(--ink)}
 
 /* NoteChip — motivos rápidos de rechazo */
 .dr-notechip{border:2px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:var(--radius-pill);padding:8px 14px;min-height:var(--touch-min);font-size:15px;font-weight:600;cursor:pointer}
+
+/* ---- Patrones del prototipo que aún no tienen ficha en design/design-system (layout, panel, actividad). ---- */
+body{margin:0;background:var(--ground)}
+.dr-shell{max-width:var(--app-max-width);margin:0 auto;min-height:100dvh;background:var(--ground)}
+.dr-body{display:flex;flex-direction:column;gap:var(--space-3);
+  padding:var(--space-4) max(var(--space-4),env(safe-area-inset-right,0px)) var(--space-6) max(var(--space-4),env(safe-area-inset-left,0px))}
+.dr-header--stack{flex-direction:column;align-items:stretch;gap:var(--space-1)}
+.dr-header__count{font-size:18px;font-weight:800;color:var(--plate);white-space:nowrap}
+.dr-stack{min-width:0;display:flex;flex-direction:column;gap:2px}
+.dr-stack > .dr-plate{align-self:flex-start}
+a.dr-card{text-decoration:none}
+a.dr-card:active{border-color:var(--ink)}
+.dr-panel{background:var(--surface);border:2px solid var(--line);border-radius:var(--radius-lg);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2)}
+.dr-panel--empty{text-align:center;padding:var(--space-5) var(--space-4)}
+.dr-panel__title{font-size:19px;font-weight:800}
+.dr-log{display:flex;justify-content:space-between;gap:var(--space-3);font-size:15px;border-bottom:1px solid var(--line);padding:7px 0}
+.dr-log time{white-space:nowrap;color:var(--muted);font-variant-numeric:tabular-nums}
+.dr-notice--error{background:var(--reject-bg);border-color:var(--reject);color:var(--reject);display:flex;flex-direction:column;gap:var(--space-2)}
+.dr-input--plate{text-transform:uppercase;font-weight:800;letter-spacing:.06em}
+@media (prefers-reduced-motion:no-preference){.dr-flash{animation:dr-flash .9s ease-out}@keyframes dr-flash{from{box-shadow:0 0 0 4px var(--plate)}to{box-shadow:0 0 0 0 transparent}}}
