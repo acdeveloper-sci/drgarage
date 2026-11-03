@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap");
+
+/* Taller Don Ramiro — clases de componentes. Todo color/medida sale de tokens.css (var(--token)). */
+.dr-app{font-family:var(--font-sans);color:var(--ink);background:var(--ground);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+.dr-app *,.dr-app *::before,.dr-app *::after{box-sizing:border-box}
+.dr-app button,.dr-app input,.dr-app textarea,.dr-app select{font-family:inherit;color:inherit}
+.dr-app :focus-visible{outline:none;box-shadow:var(--focus-ring)}
+
+/* Button — botones grandes de acción */
+.dr-btn{min-height:var(--button-height);width:100%;border:none;border-radius:var(--radius-lg);padding:8px var(--space-4);
+  display:flex;align-items:center;justify-content:center;gap:10px;font-size:20px;font-weight:800;line-height:1.15;text-align:center;text-decoration:none;cursor:pointer}
+.dr-btn--primary{background:var(--ink);color:var(--on-ink)}
+.dr-btn--accent{background:var(--plate);color:var(--plate-ink)}
+.dr-btn--whatsapp{background:var(--whatsapp);color:var(--on-ink)}
+.dr-btn--whatsapp:hover,.dr-btn--whatsapp:active{background:var(--whatsapp-hover)}
+.dr-btn--outline{background:var(--surface);color:var(--ink);border:3px solid var(--ink)}
+.dr-btn--approve{background:var(--status-listo);color:var(--on-ink)}
+.dr-btn--reject{background:var(--surface);color:var(--reject);border:3px solid var(--reject)}
+.dr-btn--link{background:transparent;color:var(--ink);min-height:48px;font-size:17px;text-decoration:underline}
+.dr-btn svg{flex:none}
+
+/* IconButton — volver */
+.dr-iconbtn{width:var(--icon-button);height:var(--icon-button);flex:none;border:none;border-radius:var(--radius-md);background:var(--ink-2);color:var(--on-ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* StatusButton — 4 estados en cuadrícula 2×2 */
+.dr-status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dr-status-btn{min-height:var(--status-button-height);border-radius:var(--radius-lg);border:3px solid var(--line);background:var(--surface);color:var(--ink);
+  font-size:19px;font-weight:800;line-height:1.15;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;cursor:pointer}
+.dr-status-btn[aria-pressed="true"]{color:var(--on-ink)}
+.dr-status-btn--recibido[aria-pressed="true"]{background:var(--status-recibido);border-color:var(--status-recibido)}
+.dr-status-btn--proceso[aria-pressed="true"]{background:var(--status-proceso);border-color:var(--status-proceso)}
+.dr-status-btn--cotizacion[aria-pressed="true"]{background:var(--status-cotizacion);border-color:var(--status-cotizacion)}
+.dr-status-btn--listo[aria-pressed="true"]{background:var(--status-listo);border-color:var(--status-listo)}
+
+/* Plate — insignia de placa */
+.dr-plate{display:inline-flex;align-items:center;padding:2px 10px;background:var(--plate);color:var(--plate-ink);border:2px solid var(--plate-ink);
+  border-radius:var(--radius-sm);font-weight:800;letter-spacing:.07em;font-size:18px;line-height:1.25;white-space:nowrap;text-transform:uppercase}
+.dr-plate--xl{font-size:26px;padding:4px 14px}
+
+/* Chip — píldoras de estado y de cotización */
+.dr-chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-pill);font-size:14px;font-weight:700;white-space:nowrap}
+.dr-chip--recibido{background:var(--status-recibido-bg);color:var(--status-recibido-fg)}
+.dr-chip--proceso{background:var(--status-proceso-bg);color:var(--status-proceso-fg)}
+.dr-chip--cotizacion,.dr-chip--pendiente{background:var(--status-cotizacion-bg);color:var(--status-cotizacion-fg)}
+.dr-chip--listo,.dr-chip--aprobada{background:var(--status-listo-bg);color:var(--status-listo-fg)}
+.dr-chip--rechazada{background:var(--reject-bg);color:var(--reject)}
+
+/* Card / CarCard */
+.dr-card{display:flex;flex-direction:column;gap:var(--space-2);width:100%;text-align:left;padding:var(--space-4);background:var(--surface);border:2px solid var(--line);border-radius:var(--radius-lg);color:var(--ink)}
+button.dr-card{cursor:pointer;font:inherit}
+button.dr-card:active{border-color:var(--ink)}
+.dr-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);width:100%}
+.dr-muted{color:var(--muted)}
+.dr-lead{font-size:18px;font-weight:700}
+.dr-caption{font-size:14px;color:var(--muted)}
+.dr-eyebrow{font-size:14px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+
+/* QuoteCard */
+.dr-quote{background:var(--surface);border:3px solid var(--status-cotizacion);border-radius:var(--radius-xl);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-3)}
+.dr-price{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.dr-thumb{display:block;width:100%;max-width:100%;height:160px;object-fit:cover;border-radius:var(--radius-md)}
+.dr-quote-note{font-size:15px;background:var(--ground);border-radius:8px;padding:8px 10px}
+
+/* Field — campos de formulario */
+.dr-field{display:flex;flex-direction:column;gap:6px;font-size:15px;font-weight:700}
+.dr-input,.dr-textarea{width:100%;border:2px solid var(--line-strong);border-radius:var(--radius-md);background:var(--surface);color:var(--ink)}
+.dr-input{height:var(--input-height);padding:0 14px;font-size:18px}
+.dr-textarea{min-height:88px;padding:12px 14px;font-size:17px;resize:vertical}
+.dr-input:focus,.dr-textarea:focus{outline:none;border-color:var(--ink);box-shadow:var(--focus-ring)}
+.dr-error{color:var(--reject);font-size:15px;font-weight:700}
+.dr-photo{display:flex;align-items:center;justify-content:center;gap:10px;min-height:var(--button-height);border:2px dashed var(--muted);border-radius:var(--radius-lg);font-size:18px;font-weight:700;background:var(--surface);cursor:pointer}
+.dr-photo:focus-within{box-shadow:var(--focus-ring)}
+.dr-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Notice */
+.dr-notice{background:var(--notice-bg);border:2px solid var(--notice-line);border-radius:14px;padding:12px 14px;font-size:16px;font-weight:700}
+
+/* AppHeader */
+.dr-header{background:var(--ink);color:var(--on-ink);padding:var(--space-4);display:flex;align-items:center;gap:var(--space-3)}
+.dr-header h1{margin:0;font-size:26px;font-weight:800;line-height:1.1}
+.dr-header .dr-sub{font-size:14px;font-weight:600;color:var(--on-ink-muted)}
+
+/* Stepper — avance para el cliente */
+.dr-steps{display:flex;flex-direction:column;gap:10px}
+.dr-step{display:flex;align-items:center;gap:var(--space-3);font-size:17px;font-weight:600;color:var(--muted)}
+.dr-step__dot{width:28px;height:28px;flex:none;border-radius:var(--radius-pill);border:3px solid var(--line-strong);background:var(--surface);color:var(--on-ink);display:flex;align-items:center;justify-content:center}
+.dr-step--done{color:var(--ink)}
+.dr-step--done .dr-step__dot{background:var(--ink);border-color:var(--ink)}
+.dr-step--current{color:var(--ink);font-weight:800}
+.dr-step--current .dr-step__dot{border-color:var(--status-listo);background:var(--status-listo-bg)}
+
+/* NoteChip — motivos rápidos de rechazo */
+.dr-notechip{border:2px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:var(--radius-pill);padding:8px 14px;min-height:var(--touch-min);font-size:15px;font-weight:600;cursor:pointer}

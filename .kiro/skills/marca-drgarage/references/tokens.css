@@ -1,0 +1,62 @@
+/* Taller Don Ramiro — generado desde tokens.json. Fuente de verdad: tokens.json */
+:root {
+  --ink: #16181B;
+  --ink-2: #2A2D31;
+  --ground: #F3F3EF;
+  --surface: #FFFFFF;
+  --line: #D6D5CE;
+  --line-strong: #85837B;
+  --muted: #555A61;
+  --on-ink: #FFFFFF;
+  --on-ink-muted: #C9CBCF;
+  --plate: #F5C400;
+  --plate-ink: #111111;
+  --notice-bg: #FFF4CC;
+  --notice-line: #C99A00;
+  --whatsapp: #0E7A3F;
+  --whatsapp-hover: #0B6634;
+  --status-recibido: #3F4B5A;
+  --status-recibido-bg: #E3E7EC;
+  --status-recibido-fg: #2E3A48;
+  --status-proceso: #A35200;
+  --status-proceso-bg: #FCE3BF;
+  --status-proceso-fg: #7A4300;
+  --status-cotizacion: #1F5BB8;
+  --status-cotizacion-bg: #DCE8FB;
+  --status-cotizacion-fg: #1A4C9C;
+  --status-listo: #1B6E39;
+  --status-listo-bg: #D6F0DD;
+  --status-listo-fg: #155C2E;
+  --reject: #8E1F17;
+  --reject-bg: #F8DAD7;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 18px;
+  --radius-pill: 999px;
+  --touch-min: 44px;
+  --icon-button: 48px;
+  --input-height: 56px;
+  --button-height: 64px;
+  --status-button-height: 88px;
+  --app-max-width: 480px;
+  --focus-ring: 0 0 0 3px #F5C400;
+  --font-sans: Archivo, "Helvetica Neue", Arial, system-ui, sans-serif;
+}
+.type-status { font-family: var(--font-sans); font-size: 32px; line-height: 1.05; font-weight: 800; }
+.type-price { font-family: var(--font-sans); font-size: 30px; line-height: 1.1; font-weight: 800; }
+.type-title { font-family: var(--font-sans); font-size: 26px; line-height: 1.1; font-weight: 800; }
+.type-button { font-family: var(--font-sans); font-size: 20px; line-height: 1.15; font-weight: 800; }
+.type-status-button { font-family: var(--font-sans); font-size: 19px; line-height: 1.15; font-weight: 800; }
+.type-lead { font-family: var(--font-sans); font-size: 18px; line-height: 1.35; font-weight: 600; }
+.type-body { font-family: var(--font-sans); font-size: 16px; line-height: 1.4; font-weight: 400; }
+.type-label { font-family: var(--font-sans); font-size: 15px; line-height: 1.3; font-weight: 700; }
+.type-caption { font-family: var(--font-sans); font-size: 14px; line-height: 1.35; font-weight: 400; }
+.type-eyebrow { font-family: var(--font-sans); font-size: 14px; line-height: 1.2; font-weight: 800; letter-spacing: 0.08em; }
+.type-plate { font-family: var(--font-sans); font-size: 18px; line-height: 1.25; font-weight: 800; letter-spacing: 0.07em; }

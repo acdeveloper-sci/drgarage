@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seguimiento de Autos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: una columna tipo app móvil (máx. 480px), barra de rol fija arriba; tema claro único, alto contraste para luz de taller */
+:root{
+  --ink:#16181B; --ink-2:#2A2D31; --ground:#F3F3EF; --surface:#FFFFFF; --line:#D6D5CE; --line-strong:#85837B;
+  --muted:#555A61; --on-ink:#FFFFFF; --on-ink-muted:#C9CBCF;
+  --plate:#F5C400; --plate-ink:#111111; --notice:#FFF4CC; --notice-line:#C99A00;
+  --wa:#0E7A3F; --wa-hover:#0B6634;
+  --st-rec-bg:#E3E7EC; --st-rec-fg:#2E3A48; --st-rec:#3F4B5A;
+  --st-pro-bg:#FCE3BF; --st-pro-fg:#7A4300; --st-pro:#A35200;
+  --st-cot-bg:#DCE8FB; --st-cot-fg:#1A4C9C; --st-cot:#1F5BB8;
+  --st-lis-bg:#D6F0DD; --st-lis-fg:#155C2E; --st-lis:#1B6E39;
+  --bad-bg:#F8DAD7; --bad:#8E1F17;
+  --font:'Archivo', 'Helvetica Neue', Arial, system-ui, sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{background:var(--ground)}
+body{color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ink)}
+button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--plate);outline-offset:2px}
+.app{max-width:480px;margin:0 auto;min-height:100%;background:var(--ground)}
+.rolebar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ink);color:var(--on-ink);
+  padding-block:10px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));
+  display:flex;align-items:center;gap:10px}
+.seg{flex:1;display:grid;grid-template-columns:1fr 1fr;background:var(--ink-2);border-radius:12px;padding:4px;gap:4px}
+.seg button{border:none;background:transparent;color:var(--on-ink-muted);font-weight:800;font-size:15px;min-height:44px;border-radius:9px}
+.seg button[aria-pressed="true"]{background:var(--plate);color:var(--plate-ink)}
+.reset{border:none;background:transparent;color:var(--on-ink-muted);font-size:13px;font-weight:700;min-height:44px;padding:0 6px;text-decoration:underline}
+.demo{background:var(--notice);border-bottom:1px solid var(--notice-line);font-size:14px;padding-block:8px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.head{background:var(--ink);color:var(--on-ink);padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:12px}
+.head h1{margin:0;font-size:26px;font-weight:800;line-height:1.1;text-wrap:balance}
+.head .sub{font-size:14px;color:var(--on-ink-muted);font-weight:600}
+.body{padding-block:16px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.iconbtn{width:48px;height:48px;flex:none;border-radius:12px;border:none;background:var(--ink-2);color:var(--on-ink);display:flex;align-items:center;justify-content:center}
+.plate{display:inline-flex;align-items:center;padding:2px 10px;background:var(--plate);color:var(--plate-ink);border:2px solid var(--plate-ink);border-radius:6px;font-weight:800;letter-spacing:.07em;font-size:18px;line-height:1.25;white-space:nowrap}
+.plate.xl{font-size:26px;padding:4px 14px}
+.chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:14px;font-weight:700;white-space:nowrap}
+.st-recibido{background:var(--st-rec-bg);color:var(--st-rec-fg)}
+.st-proceso{background:var(--st-pro-bg);color:var(--st-pro-fg)}
+.st-cotizacion,.q-pendiente{background:var(--st-cot-bg);color:var(--st-cot-fg)}
+.st-listo,.q-aprobada{background:var(--st-lis-bg);color:var(--st-lis-fg)}
+.q-rechazada{background:var(--bad-bg);color:var(--bad)}
+.q-anulada{background:var(--line);color:var(--ink)}
+.pindots{display:flex;gap:16px;justify-content:center;padding:8px 0}
+.pindot{width:20px;height:20px;border-radius:999px;border:3px solid var(--ink);background:transparent}
+.pindot.on{background:var(--ink)}
+.keypad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;max-width:340px}
+.key{min-height:72px;border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-size:30px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.key:active{background:var(--line)}
+.key-del{background:transparent;border-color:transparent}
+.card{display:flex;flex-direction:column;gap:8px;width:100%;text-align:left;padding:16px;background:var(--surface);border:2px solid var(--line);border-radius:16px;color:var(--ink)}
+.card:active{border-color:var(--ink)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.muted{color:var(--muted)}
+.big{min-height:64px;border-radius:16px;font-size:20px;font-weight:800;border:none;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;text-decoration:none;padding:8px 16px;text-align:center;line-height:1.15}
+.dark{background:var(--ink);color:var(--on-ink)}
+.yellow{background:var(--plate);color:var(--plate-ink)}
+.wa{background:var(--wa);color:var(--on-ink)}
+.wa:hover{background:var(--wa-hover)}
+.ghost{background:var(--surface);color:var(--ink);border:3px solid var(--ink)}
+.ok{background:var(--st-lis);color:var(--on-ink)}
+.no{background:var(--surface);color:var(--bad);border:3px solid var(--bad)}
+.link{background:transparent;color:var(--ink);min-height:48px;font-size:17px;text-decoration:underline}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sbtn{min-height:88px;border-radius:16px;border:3px solid var(--line);background:var(--surface);color:var(--ink);font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;line-height:1.15}
+.sbtn[aria-pressed="true"]{color:var(--on-ink)}
+.sbtn.s-recibido[aria-pressed="true"]{background:var(--st-rec);border-color:var(--st-rec)}
+.sbtn.s-proceso[aria-pressed="true"]{background:var(--st-pro);border-color:var(--st-pro)}
+.sbtn.s-cotizacion[aria-pressed="true"]{background:var(--st-cot);border-color:var(--st-cot)}
+.sbtn.s-listo[aria-pressed="true"]{background:var(--st-lis);border-color:var(--st-lis)}
+.h2{margin:6px 0 0;font-size:14px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lbl{font-size:15px;font-weight:700;display:flex;flex-direction:column;gap:6px}
+.inp,.ta,.sel{width:100%;border:2px solid var(--line-strong);border-radius:12px;background:var(--surface);color:var(--ink)}
+.inp{height:56px;padding:0 14px;font-size:18px}
+.ta{min-height:88px;padding:12px 14px;font-size:17px;resize:vertical}
+.sel{height:44px;padding:0 10px;font-size:15px;font-weight:700}
+.inp:focus,.ta:focus{outline:3px solid var(--plate);border-color:var(--ink)}
+.notice{background:var(--notice);border:2px solid var(--notice-line);border-radius:14px;padding:12px 14px;font-size:16px;font-weight:700}
+.err{color:var(--bad);font-size:15px;font-weight:700}
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.photo{display:flex;align-items:center;justify-content:center;gap:10px;min-height:64px;border:2px dashed var(--muted);border-radius:16px;font-size:18px;font-weight:700;background:var(--surface);cursor:pointer}
+.photo:focus-within{outline:3px solid var(--plate)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.thumb{width:100%;max-width:100%;height:160px;object-fit:cover;border-radius:12px;display:block}
+.log{display:flex;justify-content:space-between;gap:12px;font-size:15px;border-bottom:1px solid var(--line);padding:7px 0}
+.log span:last-child{white-space:nowrap;color:var(--muted);font-variant-numeric:tabular-nums}
+.url{background:var(--line);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:8px}
+.urlbox{background:var(--surface);border-radius:10px;padding:8px 12px;font-size:14px;color:var(--ink-2);display:flex;align-items:center;gap:8px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.status-big{font-size:32px;font-weight:800;line-height:1.05;text-wrap:balance}
+.steps{display:flex;flex-direction:column;gap:10px;padding-top:4px}
+.step{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:600;color:var(--muted)}
+.dot{width:28px;height:28px;border-radius:999px;border:3px solid var(--line-strong);background:var(--surface);display:flex;align-items:center;justify-content:center;flex:none;color:var(--on-ink)}
+.step.done{color:var(--ink)}
+.step.done .dot{background:var(--ink);border-color:var(--ink)}
+.step.cur{color:var(--ink);font-weight:800}
+.step.cur .dot{border-color:var(--st-lis);background:var(--st-lis-bg)}
+.quote{background:var(--surface);border:3px solid var(--st-cot);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.eyebrow{font-size:13px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.price{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.notechip{border:2px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:15px;font-weight:600;min-height:44px}
+.hint{font-size:14px;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.flash{animation:flash .9s ease-out}@keyframes flash{from{box-shadow:0 0 0 4px var(--plate)}to{box-shadow:0 0 0 0 transparent}}}
+</style>
+
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+(function(){
+const TALLER = 'Taller Don Ramiro';
+const BASE = 'donramiro.co/auto/';
+const STATUSES = [
+  { key:'recibido', label:'Recibido', desc:'Tu vehículo ya está en el taller, en espera de revisión.' },
+  { key:'proceso', label:'En proceso', desc:'Nuestros mecánicos están trabajando en tu vehículo.' },
+  { key:'cotizacion', label:'Cotización enviada', desc:'Hay una reparación adicional esperando tu aprobación.' },
+  { key:'listo', label:'Listo', desc:'Tu vehículo está listo. Puedes pasar a recogerlo.' }
+];
+const QLABEL = { pendiente:'Pendiente', aprobada:'Aprobada', rechazada:'Rechazada', anulada:'Anulada' };
+const NOTES = ['Muy costoso por ahora','Prefiero revisarlo después','Solo lo reportado'];
+
+const I = {
+  back:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  plus:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+  chat:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg>',
+  cam:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  check:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>',
+  lock:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  eye:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>'
+};
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmt(ts){ try { return new Date(ts).toLocaleString('es-CO',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}); } catch(e){ return new Date(ts).toLocaleString(); } }
+function hora(ts){ try { return new Date(ts).toLocaleTimeString('es-CO',{hour:'numeric',minute:'2-digit'}); } catch(e){ return ''; } }
+const cop = n => '$' + Number(n||0).toLocaleString('es-CO');
+const stLabel = k => (STATUSES.find(x=>x.key===k)||{}).label || k;
+function token(){ const c='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+function waNum(w){ let d=String(w||'').replace(/\D/g,''); if(d.length===10) d='57'+d; return d; }
+const first = n => String(n).trim().split(/\s+/)[0];
+
+function seed(){
+  const now = Date.now(), m = 60000;
+  return [
+    { id:'c1', token:'K7Q2XM', nombre:'Carlos Restrepo', wa:'3001234567', placa:'KMT482', modelo:'Chevrolet Spark GT 2016', problema:'Ruido metálico al frenar', status:'cotizacion', updatedAt:now-25*m,
+      quotes:[{ id:'q1', desc:'Cambio de discos y pastillas delanteras. Los discos están por debajo del espesor mínimo.', costo:380000, foto:'', status:'pendiente', sentAt:now-25*m, decidedAt:null, nota:'' }],
+      log:[{t:now-150*m,text:'Ingreso registrado'},{t:now-120*m,text:'Estado: En proceso'},{t:now-25*m,text:'Cotización enviada: $380.000'}] },
+    { id:'c2', token:'P4MZ8R', nombre:'Luisa Fernanda Gómez', wa:'3115558822', placa:'MZX915', modelo:'Renault Logan 2019', problema:'El aire acondicionado no enfría', status:'proceso', updatedAt:now-55*m,
+      quotes:[{ id:'q2', desc:'Recarga de gas refrigerante y cambio de filtro de cabina.', costo:210000, foto:'', status:'aprobada', sentAt:now-140*m, decidedAt:now-110*m, nota:'' }],
+      log:[{t:now-200*m,text:'Ingreso registrado'},{t:now-140*m,text:'Cotización enviada: $210.000'},{t:now-110*m,text:'Cliente aprobó la cotización'},{t:now-55*m,text:'Estado: En proceso'}] },
+    { id:'c3', token:'H2SK7W', nombre:'Jorge Ramírez', wa:'3204447711', placa:'HSK207', modelo:'Mazda 3 2014', problema:'Cambio de aceite y filtros', status:'listo', updatedAt:now-15*m,
+      quotes:[{ id:'q3', desc:'Alineación y balanceo.', costo:90000, foto:'', status:'rechazada', sentAt:now-90*m, decidedAt:now-80*m, nota:'Prefiero revisarlo después' }],
+      log:[{t:now-180*m,text:'Ingreso registrado'},{t:now-90*m,text:'Cotización enviada: $90.000'},{t:now-80*m,text:'Cliente rechazó la cotización: “Prefiero revisarlo después”'},{t:now-15*m,text:'Estado: Listo'}] },
+    { id:'c4', token:'D9PR5T', nombre:'Andrea Vélez', wa:'3016662299', placa:'DPR563', modelo:'Kia Picanto 2020', problema:'Testigo de motor encendido', status:'recibido', updatedAt:now-8*m,
+      quotes:[], log:[{t:now-8*m,text:'Ingreso registrado'}] }
+  ];
+}
+
+let S;
+const PIN = '1234';
+const LINK_DAYS = 30;
+function reset(){ S = { role:'mec', authed:false, pin:'', pinErr:'', screen:'list', carId:null, clientCarId:'c1', notice:'', listNotice:'', err:'', rejecting:false, confirmDeliver:false, foto:'', cars:seed() }; }
+const active = () => S.cars.filter(c => !c.deliveredAt);
+reset();
+const carById = id => S.cars.find(c => c.id === id);
+function touch(car, text){ const t = Date.now(); car.updatedAt = t; car.log.push({ t, text }); }
+
+function waMessage(car){
+  const link = 'https://' + BASE + car.token, n = first(car.nombre);
+  const pend = car.quotes.find(q => q.status === 'pendiente');
+  if (car.status === 'cotizacion' && pend) return 'Hola ' + n + ', en ' + TALLER + ' encontramos una reparación adicional para tu ' + car.modelo + ' (' + car.placa + '): ' + pend.desc + ' Costo: ' + cop(pend.costo) + '. Apruébala o recházala aquí: ' + link;
+  if (car.status === 'recibido') return 'Hola ' + n + ', recibimos tu ' + car.modelo + ' (' + car.placa + ') en ' + TALLER + '. Sigue el avance aquí: ' + link;
+  if (car.status === 'listo') return 'Hola ' + n + ', tu ' + car.modelo + ' (' + car.placa + ') ya está listo para recoger. Detalles aquí: ' + link;
+  return 'Hola ' + n + ', tu ' + car.modelo + ' (' + car.placa + ') está ahora: ' + stLabel(car.status) + '. Sigue el avance aquí: ' + link;
+}
+
+/* ---------- vistas ---------- */
+function roleBar(){
+  return '<div class="rolebar"><div class="seg" role="group" aria-label="Ver como">' +
+    '<button type="button" data-act="role" data-v="mec" aria-pressed="' + (S.role==='mec') + '">Mecánico</button>' +
+    '<button type="button" data-act="role" data-v="cli" aria-pressed="' + (S.role==='cli') + '">Cliente</button>' +
+    '</div><button type="button" class="reset" data-act="reset">Reiniciar</button></div>' +
+    '<div class="demo">Demostración con datos de ejemplo. Cambia entre <b>Mecánico</b> y <b>Cliente</b> para ver cómo se conectan.</div>';
+}
+function backHead(act, title, sub){
+  return '<div class="head"><button type="button" class="iconbtn" data-act="' + act + '" aria-label="Volver">' + I.back + '</button>' +
+    '<div style="min-width:0;display:flex;flex-direction:column;gap:2px">' + title + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div></div>';
+}
+
+function vPin(){
+  const dots = [0,1,2,3].map(i => '<span class="pindot' + (i < S.pin.length ? ' on' : '') + '"></span>').join('');
+  const keys = ['1','2','3','4','5','6','7','8','9','','0','del'].map(k =>
+    k === '' ? '<span></span>' :
+    k === 'del' ? '<button type="button" class="key key-del" data-act="pin" data-v="del" aria-label="Borrar">' + I.back + '</button>' :
+    '<button type="button" class="key" data-act="pin" data-v="' + k + '">' + k + '</button>').join('');
+  return '<div class="head" style="flex-direction:column;align-items:stretch;gap:4px"><div class="sub">' + TALLER + '</div><h1>Entrar al taller</h1></div>' +
+    '<div class="body" style="align-items:center;text-align:center">' +
+      '<div style="font-size:17px;font-weight:600">Escribe el código del taller</div>' +
+      '<div class="pindots" aria-label="' + S.pin.length + ' de 4 dígitos">' + dots + '</div>' +
+      (S.pinErr ? '<div class="err" role="alert">' + esc(S.pinErr) + '</div>' : '<div class="muted" style="font-size:14px">Código de demostración: <b>1234</b></div>') +
+      '<div class="keypad">' + keys + '</div>' +
+      '<div class="muted" style="font-size:14px">Este celular recordará el código hasta que cierres sesión.</div>' +
+    '</div>';
+}
+
+function vList(){
+  const now = Date.now();
+  const list = active();
+  const cards = list.slice().sort((a,b)=>b.updatedAt-a.updatedAt).map(c => {
+    const pend = c.quotes.some(q=>q.status==='pendiente');
+    const last = c.quotes.filter(q=>q.decidedAt).sort((a,b)=>b.decidedAt-a.decidedAt)[0];
+    let flag = '';
+    if (pend) flag = '<span class="chip q-pendiente" style="align-self:flex-start">Esperando aprobación</span>';
+    else if (last && now - last.decidedAt < 3*3600000) flag = '<span class="chip q-' + last.status + '" style="align-self:flex-start">Cotización ' + QLABEL[last.status].toLowerCase() + '</span>';
+    return '<button type="button" class="card" data-act="open" data-id="' + c.id + '">' +
+      '<div class="row" style="width:100%"><span class="plate">' + esc(c.placa) + '</span><span class="chip st-' + c.status + '">' + stLabel(c.status) + '</span></div>' +
+      '<div style="font-size:18px;font-weight:700">' + esc(c.modelo) + '</div>' +
+      '<div class="row muted" style="width:100%;font-size:15px"><span>' + esc(c.nombre) + '</span><span>' + hora(c.updatedAt) + '</span></div>' + flag + '</button>';
+  }).join('');
+  return '<div class="head" style="flex-direction:column;align-items:stretch;gap:4px"><div class="sub">' + TALLER + '</div>' +
+    '<div class="row"><h1>Autos en taller</h1><span style="font-size:18px;font-weight:800;color:var(--plate)">' + list.length + (list.length === 1 ? ' auto' : ' autos') + '</span></div></div>' +
+    '<div class="body"><button type="button" class="big yellow" data-act="new">' + I.plus + 'Ingresar auto</button>' +
+    (S.listNotice ? '<div class="notice flash" role="status">' + esc(S.listNotice) + '</div>' : '') +
+    (list.length ? cards : '<div class="panel" style="text-align:center;padding:24px 16px;gap:8px"><div style="font-size:19px;font-weight:800">No hay autos en el taller</div><div class="muted">Cuando llegue uno, toca “Ingresar auto”.</div></div>') +
+    '<button type="button" class="big link" data-act="logout">Cerrar sesión</button></div>';
+}
+
+function vNew(){
+  return backHead('list','<h1>Ingresar auto</h1>') +
+  '<form class="body" id="f-new" novalidate>' +
+    '<label class="lbl" for="n-nombre">Nombre del cliente<input class="inp" id="n-nombre" name="nombre" type="text" autocomplete="off" placeholder="Ej. María López"></label>' +
+    '<label class="lbl" for="n-wa">WhatsApp del cliente<input class="inp" id="n-wa" name="wa" type="tel" inputmode="tel" placeholder="300 123 4567"></label>' +
+    '<div class="grid2">' +
+      '<label class="lbl" for="n-placa">Placa<input class="inp" id="n-placa" name="placa" type="text" autocapitalize="characters" placeholder="ABC123" style="text-transform:uppercase;font-weight:800;letter-spacing:.06em"></label>' +
+      '<label class="lbl" for="n-modelo">Modelo<input class="inp" id="n-modelo" name="modelo" type="text" placeholder="Mazda 3 2018"></label>' +
+    '</div>' +
+    '<label class="lbl" for="n-prob">Problema reportado<textarea class="ta" id="n-prob" name="problema" placeholder="Ej. Ruido al frenar"></textarea></label>' +
+    (S.err ? '<div class="err" role="alert">' + esc(S.err) + '</div>' : '') +
+    '<button class="big dark" type="submit">Registrar ingreso</button>' +
+  '</form>';
+}
+
+function quoteBlock(q, forClient){
+  return '<div class="panel">' +
+    '<div class="row"><span style="font-size:20px;font-weight:800;font-variant-numeric:tabular-nums">' + cop(q.costo) + '</span><span class="chip q-' + q.status + '">' + QLABEL[q.status] + '</span></div>' +
+    '<div>' + esc(q.desc) + '</div>' +
+    (q.foto ? '<img class="thumb" src="' + q.foto + '" alt="Foto de la reparación">' : '') +
+    (forClient ? '' : '<div class="muted" style="font-size:14px">Enviada: ' + fmt(q.sentAt) + '</div>') +
+    (q.decidedAt ? '<div style="font-size:14px;font-weight:700">' + QLABEL[q.status] + ' el ' + fmt(q.decidedAt) + '</div>' : '') +
+    (q.nota ? '<div style="font-size:15px;background:var(--ground);border-radius:8px;padding:8px 10px">' + (forClient ? 'Tu nota' : 'Nota del cliente') + ': “' + esc(q.nota) + '”</div>' : '') +
+  '</div>';
+}
+
+function vDetail(){
+  const c = carById(S.carId);
+  const href = 'https://wa.me/' + waNum(c.wa) + '?text=' + encodeURIComponent(waMessage(c));
+  const waLabel = c.status === 'cotizacion' && c.quotes.some(q=>q.status==='pendiente') ? 'Enviar cotización por WhatsApp' : 'Avisar al cliente por WhatsApp';
+  const btns = STATUSES.map(st => '<button type="button" class="sbtn s-' + st.key + '" data-act="status" data-v="' + st.key + '" aria-pressed="' + (c.status===st.key) + '">' + st.label + '</button>').join('');
+  const quotes = c.quotes.length ? c.quotes.slice().reverse().map(q => quoteBlock(q,false)).join('') : '<div class="muted">Sin cotizaciones adicionales.</div>';
+  const log = c.log.slice().reverse().map(l => '<div class="log"><span>' + esc(l.text) + '</span><span>' + fmt(l.t) + '</span></div>').join('');
+  return backHead('list','<span class="plate" style="align-self:flex-start">' + esc(c.placa) + '</span>', esc(c.modelo)) +
+  '<div class="body">' +
+    '<div style="display:flex;flex-direction:column;gap:2px"><div style="font-weight:700;font-size:17px">' + esc(c.nombre) + ' · ' + esc(c.wa) + '</div><div class="muted">Problema: ' + esc(c.problema || '—') + '</div></div>' +
+    (S.notice ? '<div class="notice flash" role="status">' + esc(S.notice) + '</div>' : '') +
+    '<a class="big wa" href="' + esc(href) + '" target="_blank" rel="noopener" data-act="wa">' + I.chat + waLabel + '</a>' +
+    '<h2 class="h2">Cambiar estado</h2><div class="grid2">' + btns + '</div>' +
+    (c.status === 'listo'
+      ? (!S.confirmDeliver
+          ? '<button type="button" class="big dark" data-act="deliver">' + I.check.replace(/14/g,'24') + 'Entregar al cliente</button>'
+          : '<div class="panel" style="border-color:var(--ink);gap:10px"><div style="font-size:18px;font-weight:800">¿' + esc(first(c.nombre)) + ' ya recogió el auto?</div>' +
+            '<div class="muted">Saldrá de la lista. Su enlace seguirá activo ' + LINK_DAYS + ' días.</div>' +
+            '<div class="grid2"><button type="button" class="big dark" data-act="deliverok">Sí, entregar</button><button type="button" class="big ghost" data-act="delivercancel">Cancelar</button></div></div>')
+      : '') +
+    '<button type="button" class="big ghost" data-act="quote">' + I.plus + 'Cotización adicional</button>' +
+    '<button type="button" class="big link" data-act="asclient" style="min-height:48px;font-size:17px">' + I.eye + 'Ver lo que ve el cliente</button>' +
+    '<h2 class="h2">Historial de cotizaciones</h2>' + quotes +
+    '<h2 class="h2">Actividad</h2><div>' + log + '</div>' +
+  '</div>';
+}
+
+function vQuote(){
+  const c = carById(S.carId);
+  return backHead('detail','<h1 style="font-size:22px">Cotización adicional</h1>', esc(c.placa) + ' · ' + esc(c.modelo)) +
+  '<form class="body" id="f-quote" novalidate>' +
+    '<label class="lbl" for="q-desc">Descripción de la reparación<textarea class="ta" id="q-desc" name="desc" placeholder="Ej. Cambio de discos delanteros"></textarea></label>' +
+    '<label class="lbl" for="q-costo">Costo (COP)<input class="inp" id="q-costo" name="costo" type="text" inputmode="numeric" placeholder="350000" style="font-size:22px;font-weight:800"></label>' +
+    '<label class="photo" for="q-foto"><input class="vh" id="q-foto" type="file" accept="image/*">' + I.cam + '<span id="foto-lbl">' + (S.foto ? 'Cambiar foto' : 'Agregar foto (opcional)') + '</span></label>' +
+    '<img class="thumb" id="foto-prev" alt="Foto adjunta" ' + (S.foto ? 'src="' + S.foto + '"' : 'hidden') + '>' +
+    (S.err ? '<div class="err" role="alert">' + esc(S.err) + '</div>' : '') +
+    '<button class="big dark" type="submit">Guardar cotización</button>' +
+    '<div class="muted" style="font-size:15px">Al guardar, el estado pasa a “Cotización enviada” y podrás enviarla por WhatsApp.</div>' +
+  '</form>';
+}
+
+function clientPicker(sel, urlText){
+  const opts = S.cars.map(x => '<option value="' + x.id + '"' + (x.id===sel?' selected':'') + '>' + esc(x.placa) + ' · ' + esc(first(x.nombre)) + (x.deliveredAt ? ' (entregado)' : '') + '</option>').join('') +
+    '<option value="__expired"' + (sel==='__expired'?' selected':'') + '>Enlace vencido (ejemplo)</option>';
+  return '<div class="url"><label class="row" for="pick" style="font-size:13px;font-weight:700;color:var(--muted)"><span>Enlace abierto de:</span>' +
+      '<select class="sel" id="pick" style="width:auto;max-width:60%">' + opts + '</select></label>' +
+      '<div class="urlbox">' + I.lock + esc(urlText) + '</div></div>';
+}
+const PICKUP = '<div class="panel" style="gap:4px"><div class="eyebrow muted">Dónde recogerlo</div><div style="font-weight:700">[DIRECCIÓN DEL TALLER]</div><div class="muted">[HORARIO DE ATENCIÓN]</div></div>';
+
+function vExpired(){
+  return clientPicker('__expired', BASE + 'R8T3WQ') +
+    '<div class="body"><div class="muted" style="font-size:14px;font-weight:700">' + TALLER + '</div>' +
+    '<div class="panel" style="border-radius:18px;padding:20px 16px;gap:10px"><div class="status-big" style="font-size:28px">Este enlace ya no está activo</div>' +
+    '<div>Los enlaces de seguimiento funcionan hasta ' + LINK_DAYS + ' días después de entregar el vehículo.</div>' +
+    '<div class="muted">Si necesitas algo, comunícate con el taller.</div></div>' + PICKUP + '</div>';
+}
+
+function vClient(){
+  if (S.clientCarId === '__expired') return vExpired();
+  const c = carById(S.clientCarId) || S.cars[0];
+  if (c.deliveredAt) {
+    const until = c.deliveredAt + LINK_DAYS*86400000;
+    const pastD = c.quotes.filter(q => q.decidedAt).slice().reverse();
+    return clientPicker(c.id, BASE + c.token) +
+      '<div class="body"><div><div class="muted" style="font-size:14px;font-weight:700">' + TALLER + '</div><div style="font-size:24px;font-weight:800">Hola, ' + esc(first(c.nombre)) + '</div></div>' +
+      '<div class="panel" style="border-radius:18px;padding:16px;gap:12px">' +
+        '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span class="plate xl">' + esc(c.placa) + '</span><span style="font-size:16px;font-weight:600">' + esc(c.modelo) + '</span></div>' +
+        '<div class="eyebrow muted">Estado actual</div><div class="status-big">Entregado</div>' +
+        '<div>Recogiste tu vehículo el ' + fmt(c.deliveredAt) + '. Gracias por confiar en ' + TALLER + '.</div></div>' +
+      (pastD.length ? '<h2 class="h2">Tus respuestas</h2>' + pastD.map(q => quoteBlock(q,true)).join('') : '') +
+      '<div class="hint">Este enlace estará activo hasta el ' + new Date(until).toLocaleDateString('es-CO',{day:'numeric',month:'long'}) + '.</div></div>';
+  }
+  const idx = STATUSES.findIndex(x => x.key === c.status);
+  const allDone = c.status === 'listo';
+  const steps = STATUSES.map((st,i) => {
+    const done = allDone || i < idx, cur = !allDone && i === idx;
+    return '<div class="step' + (done ? ' done' : cur ? ' cur' : '') + '"><span class="dot">' + (done ? I.check : '') + '</span><span>' + st.label + '</span></div>';
+  }).join('');
+  const pend = c.quotes.find(q => q.status === 'pendiente');
+  const past = c.quotes.filter(q => q.decidedAt).slice().reverse();
+  let quote = '';
+  if (pend) {
+    quote = '<div class="quote">' +
+      '<div class="eyebrow" style="color:var(--st-cot-fg)">Reparación adicional · requiere tu aprobación</div>' +
+      '<div style="font-size:18px;font-weight:600">' + esc(pend.desc) + '</div>' +
+      (pend.foto ? '<img class="thumb" src="' + pend.foto + '" alt="Foto de la reparación propuesta">' : '') +
+      '<div class="price">' + cop(pend.costo) + '</div>' +
+      (!S.rejecting
+        ? '<div class="grid2"><button type="button" class="big ok" data-act="approve">Aprobar</button><button type="button" class="big no" data-act="rejstart">Rechazar</button></div>'
+        : '<label class="lbl" for="r-note">¿Por qué la rechazas? (opcional)<textarea class="ta" id="r-note" maxlength="140" placeholder="Escribe una breve nota"></textarea></label>' +
+          '<div class="chips">' + NOTES.map(n => '<button type="button" class="notechip" data-act="chip" data-v="' + esc(n) + '">' + esc(n) + '</button>').join('') + '</div>' +
+          '<button type="button" class="big no" data-act="rejsend">Enviar rechazo</button>' +
+          '<button type="button" class="big link" data-act="rejcancel">Cancelar</button>') +
+    '</div>';
+  }
+  return clientPicker(c.id, BASE + c.token) +
+    '<div class="body">' +
+      '<div><div class="muted" style="font-size:14px;font-weight:700">' + TALLER + '</div><div style="font-size:24px;font-weight:800">Hola, ' + esc(first(c.nombre)) + '</div></div>' +
+      '<div class="panel" style="border-radius:18px;padding:16px;gap:12px">' +
+        '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span class="plate xl">' + esc(c.placa) + '</span><span style="font-size:16px;font-weight:600">' + esc(c.modelo) + '</span></div>' +
+        '<div style="display:flex;flex-direction:column;gap:4px"><div class="eyebrow muted">Estado actual</div><div class="status-big">' + stLabel(c.status) + '</div>' +
+        '<div>' + STATUSES[idx].desc + '</div><div class="muted" style="font-size:14px">Actualizado: ' + fmt(c.updatedAt) + '</div></div>' +
+        '<div class="steps">' + steps + '</div>' +
+      '</div>' + (allDone ? PICKUP : '') + quote +
+      (past.length ? '<h2 class="h2">Tus respuestas</h2>' + past.map(q => quoteBlock(q,true)).join('') : '') +
+      '<div class="hint">Esta página se actualiza sola. No necesitas registrarte ni instalar nada.</div>' +
+    '</div>';
+}
+
+function render(scrollTop){
+  let v;
+  if (S.role === 'cli') v = vClient();
+  else if (!S.authed) v = vPin();
+  else if (S.screen === 'new') v = vNew();
+  else if (S.screen === 'detail' && carById(S.carId)) v = vDetail();
+  else if (S.screen === 'quote' && carById(S.carId)) v = vQuote();
+  else v = vList();
+  app.innerHTML = roleBar() + v;
+  if (scrollTop) window.scrollTo(0,0);
+}
+const app = document.getElementById('app');
+
+/* ---------- acciones ---------- */
+function go(screen, extra){ Object.assign(S, { screen, err:'', rejecting:false, confirmDeliver:false, listNotice:'' }, extra || {}); render(true); }
+
+app.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const act = el.dataset.act, v = el.dataset.v;
+  const car = carById(S.carId), cc = carById(S.clientCarId);
+  switch (act) {
+    case 'role': S.role = v; S.rejecting = false; render(true); break;
+    case 'reset': reset(); render(true); break;
+    case 'open': go('detail', { carId: el.dataset.id, clientCarId: el.dataset.id, notice:'' }); break;
+    case 'list': go('list', { notice:'' }); break;
+    case 'detail': go('detail'); break;
+    case 'new': go('new'); break;
+    case 'quote': go('quote', { foto:'', notice:'' }); break;
+    case 'asclient': S.clientCarId = S.carId; S.role = 'cli'; render(true); break;
+    case 'pin':
+      if (v === 'del') S.pin = S.pin.slice(0,-1);
+      else if (S.pin.length < 4) S.pin += v;
+      S.pinErr = '';
+      if (S.pin.length === 4) {
+        if (S.pin === PIN) { S.authed = true; S.pin = ''; go('list'); return; }
+        S.pin = ''; S.pinErr = 'Código incorrecto. Inténtalo de nuevo.';
+      }
+      render(); break;
+    case 'logout': S.authed = false; S.pin = ''; S.pinErr = ''; go('list'); break;
+    case 'deliver': S.confirmDeliver = true; render(); break;
+    case 'delivercancel': S.confirmDeliver = false; render(); break;
+    case 'deliverok':
+      if (car) {
+        car.quotes.forEach(q => { if (q.status === 'pendiente') q.status = 'anulada'; });
+        touch(car, 'Entregado al cliente'); car.deliveredAt = Date.now();
+        go('list', { listNotice: car.placa + ' entregado. Su enlace seguirá activo ' + LINK_DAYS + ' días.' });
+      }
+      break;
+    case 'status':
+      S.confirmDeliver = false;
+      if (car && car.status !== v) { car.status = v; touch(car, 'Estado: ' + stLabel(v)); S.notice = 'Estado cambiado a “' + stLabel(v) + '”. Avisa al cliente con el botón verde.'; render(); }
+      break;
+    case 'wa':
+      if (car) { touch(car, 'Aviso enviado por WhatsApp'); S.notice = ''; setTimeout(render, 0); }
+      break;
+    case 'approve': decide(cc, 'aprobada', ''); break;
+    case 'rejstart': S.rejecting = true; render(); { const t = document.getElementById('r-note'); if (t) t.focus(); } break;
+    case 'rejcancel': S.rejecting = false; render(); break;
+    case 'chip': { const t = document.getElementById('r-note'); if (t) t.value = v; } break;
+    case 'rejsend': { const t = document.getElementById('r-note'); decide(cc, 'rechazada', t ? t.value.trim().slice(0,140) : ''); } break;
+  }
+});
+
+function decide(c, status, nota){
+  const q = c && c.quotes.find(x => x.status === 'pendiente'); if (!q) return;
+  q.status = status; q.decidedAt = Date.now(); q.nota = nota;
+  touch(c, status === 'aprobada' ? 'Cliente aprobó la cotización' : 'Cliente rechazó la cotización' + (nota ? ': “' + nota + '”' : ''));
+  S.rejecting = false; render();
+}
+
+app.addEventListener('change', e => {
+  if (e.target.id === 'pick') { S.clientCarId = e.target.value; S.rejecting = false; render(); }
+  if (e.target.id === 'q-foto') {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { S.foto = r.result; const p = document.getElementById('foto-prev'); p.src = S.foto; p.hidden = false; document.getElementById('foto-lbl').textContent = 'Cambiar foto'; };
+    r.readAsDataURL(f);
+  }
+});
+
+app.addEventListener('submit', e => {
+  e.preventDefault();
+  const fd = new FormData(e.target), g = k => String(fd.get(k) || '').trim();
+  if (e.target.id === 'f-new') {
+    if (!g('nombre') || !g('placa') || !g('modelo')) { S.err = 'Completa nombre, placa y modelo.'; keep(e.target); return; }
+    if (waNum(g('wa')).length < 11) { S.err = 'Revisa el WhatsApp: debe tener 10 dígitos, por ejemplo 300 123 4567.'; keep(e.target); return; }
+    const t = Date.now(), id = 'c' + t;
+    S.cars.unshift({ id, token: token(), nombre: g('nombre'), wa: g('wa'), placa: g('placa').toUpperCase(), modelo: g('modelo'), problema: g('problema'), status:'recibido', updatedAt:t, quotes:[], log:[{ t, text:'Ingreso registrado' }] });
+    go('detail', { carId:id, clientCarId:id, notice:'Auto registrado. Envía el enlace de seguimiento al cliente con el botón verde.' });
+  }
+  if (e.target.id === 'f-quote') {
+    const car = carById(S.carId), costo = Number(g('costo').replace(/\D/g,''));
+    if (!g('desc')) { S.err = 'Escribe la descripción de la reparación.'; keep(e.target); return; }
+    if (!(costo > 0)) { S.err = 'Escribe el costo en pesos, solo números.'; keep(e.target); return; }
+    const t = Date.now();
+    car.quotes = car.quotes.filter(q => q.status !== 'pendiente');
+    car.quotes.push({ id:'q'+t, desc:g('desc'), costo, foto:S.foto, status:'pendiente', sentAt:t, decidedAt:null, nota:'' });
+    car.status = 'cotizacion'; touch(car, 'Cotización enviada: ' + cop(costo));
+    go('detail', { notice:'Cotización guardada. Envíala al cliente con el botón verde.', foto:'' });
+  }
+});
+
+/* re-render the form with its error while keeping what was typed */
+function keep(form){
+  const vals = {}; form.querySelectorAll('input[id]:not([type=file]),textarea[id]').forEach(i => vals[i.id] = i.value);
+  render();
+  Object.keys(vals).forEach(id => { const i = document.getElementById(id); if (i) i.value = vals[id]; });
+}
+
+render();
+})();
+</script>
+
+</body>
+</html>
