@@ -47,7 +47,9 @@
   --status-button-height: 88px;
   --app-max-width: 480px;
   --focus-ring: 0 0 0 3px #F5C400;
-  --font-sans: Archivo, "Helvetica Neue", Arial, system-ui, sans-serif;
+  /* Difiere de design/design-system/tokens.css: la fuente la carga next/font (app/layout.tsx),
+     que expone el nombre generado de Archivo en --font-archivo. */
+  --font-sans: var(--font-archivo, Archivo), "Helvetica Neue", Arial, system-ui, sans-serif;
 }
 .type-status { font-family: var(--font-sans); font-size: 32px; line-height: 1.05; font-weight: 800; }
 .type-price { font-family: var(--font-sans); font-size: 30px; line-height: 1.1; font-weight: 800; }

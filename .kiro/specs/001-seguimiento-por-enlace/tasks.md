@@ -26,11 +26,11 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 ### 0. Preparación del Proyecto
 
-- [ ] 0.1 Instalar dependencias y configurar Vitest
+- [x] 0.1 Instalar dependencias y configurar Vitest
   - **Criterio(s)**: Soporte de todos los requisitos
   - Instalar con npm: `@supabase/supabase-js` y `server-only` (dependencias); `vitest` y `fast-check` (desarrollo). Crear `vitest.config.ts` con el alias `@/*` y agregar el script `"test": "vitest run"` en `package.json`.
 
-- [ ] 0.2 Layout raíz, variables de entorno y limpieza de la plantilla
+- [x] 0.2 Layout raíz, variables de entorno y limpieza de la plantilla
   - **Criterio(s)**: Soporte de todos los requisitos
   - En `app/layout.tsx`: importar `styles/tokens.css` y `styles/components.css`, cargar la fuente Archivo con `next/font/google` y usar `<html lang="es">`. Retirar `app/globals.css` y `app/page.module.css` de la plantilla si ya no se usan. Crear `.env.example` con `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `NEXT_PUBLIC_SITE_URL` (sin valores) y confirmar que `.env.local` está en `.gitignore`.
 
