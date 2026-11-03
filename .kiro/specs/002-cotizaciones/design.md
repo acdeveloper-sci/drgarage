@@ -115,21 +115,21 @@ export interface Cotizacion {
   nota?: string;
 }
 
-// Lo único que la página del cliente recibe de una cotización (sin nota ni auto_id).
+// Lo único que la página del cliente recibe de una cotización (sin auto_id).
+// Incluye la nota: la escribió el propio cliente y la captura 11 se la muestra ("Tu nota").
 export type CotizacionPublica = Pick<
   Cotizacion,
-  'id' | 'descripcion' | 'costoCop' | 'estado' | 'enviadaEn' | 'decididaEn'
+  'id' | 'descripcion' | 'costoCop' | 'estado' | 'enviadaEn' | 'decididaEn' | 'nota'
 >;
 ```
 
 - `Auto` suma `ultimaCotizacion?: Cotizacion` (la más reciente que no esté anulada).
-- `AutoPublico` suma `cotizacion?: CotizacionPublica` (la más reciente que no esté anulada). Sigue sin WhatsApp ni ningún dato interno.
+- `AutoPublico` suma `cotizacion?: CotizacionPublica` (la más reciente que no esté anulada). Sigue sin WhatsApp ni ningún dato interno del taller; de la cotización no incluye `auto_id`.
 - `TipoEvento` suma `cotizacion_creada` y `cotizacion_decidida` (el mapeo de filas lanza error con tipos desconocidos).
 
 ### 2.3 Mensaje de WhatsApp (`lib/dominio/mensajes.ts`)
 
 El texto del botón verde también depende de la cotización: con una pendiente es "Enviar cotización por WhatsApp" (texto del prototipo); sin ella sigue siendo "Avisar al cliente por WhatsApp".
-
 
 `armarMensajeWhatsApp` recibe opcionalmente la cotización pendiente. Con ella usa esta plantilla (texto de la entrada; manda el prototipo si difiere), con el texto codificado con `encodeURIComponent` y el prefijo 57 como en el feature 01:
 
@@ -181,11 +181,13 @@ Se expone como `descripcionEstado(estado, estadoCotizacion?)`; los demás estado
 `decidirCotizacion(token, cotizacionId, decision, nota?)`:
 
 1. El `decision` solo puede ser `'aprobar'` o `'rechazar'`; cualquier otro valor se rechaza.
-2. El token debe corresponder a un auto existente.
-3. La cotización debe pertenecer a ese auto; si no, no se modifica nada y se devuelve el estado existente.
+2. El token debe corresponder a un auto existente; si no, la acción responde que el enlace no existe y la página muestra la de enlace inactivo del feature 01 (`not-found`).
+3. La cotización debe pertenecer a ese auto; si no, no se modifica nada y se devuelve la cotización actual del auto del token (`AutoPublico.cotizacion`). Un enlace nunca devuelve la cotización de otro auto.
 4. Si rechaza, valida la nota con `validarNota`; si aprueba, la nota se ignora.
 5. Ejecuta el `update` condicionado de `decidirCotizacion` (sección 3). Si no se aplicó, devuelve la cotización existente (decisión única, sin error).
-6. Si se aplicó, registra el evento `cotizacion_decidida` y revalida `/`, `/autos/{id}` y `/auto/{token}`.
+6. Si se aplicó, registra el evento `cotizacion_decidida` con el texto del prototipo ("Cliente aprobó la cotización", o "Cliente rechazó la cotización" seguido de `: “{nota}”` si hay nota) y revalida `/`, `/autos/{id}` y `/auto/{token}`.
+
+Lo que devuelve al navegador es siempre `CotizacionPublica` (nunca `auto_id`).
 
 La acción es pública (solo el token no adivinable la protege), por lo que no confía en nada que venga del navegador salvo el token, el id y la decisión validada. La limitación de intentos queda como límite conocido (fuera de alcance).
 
@@ -193,8 +195,10 @@ La acción es pública (solo el token no adivinable la protege), por lo que no c
 
 ### 6.1 Ficha del auto (`app/(taller)/autos/[id]/`)
 
-- Botón "Cotización adicional" que abre el formulario (pantalla 08): campos descripción y costo (Field), error con Notice y valores conservados.
-- Historial de cotizaciones (pantalla 12): cada una con estado (Chip), monto, descripción, fecha de envío, fecha de decisión y nota del cliente (NoteChip).
+- Orden de la ficha (captura 12): cliente y problema, aviso, botón verde, "Cambiar estado", botón "Cotización adicional", "Historial de cotizaciones" y "Actividad". Sin "Ver lo que ve el cliente" ni "Entregar al cliente" (ver sección 14).
+- Botón "Cotización adicional" (con ícono +) que abre el formulario en su propia pantalla, `/autos/{id}/cotizacion` (captura 08): encabezado "Cotización adicional" con botón de volver y "{placa} · {modelo}"; campos "Descripción de la reparación" (ejemplo "Ej. Cambio de discos delanteros") y "Costo (COP)" (ejemplo "350000", teclado numérico); botón "Guardar cotización" y nota al pie "Al guardar, el estado pasa a “Cotización enviada” y podrás enviarla por WhatsApp." Sin "Agregar foto" (fuera de alcance). Los errores de los campos se muestran en el bloque de error encima del botón, y se conserva lo escrito. Al guardar vuelve a la ficha con el aviso "Cotización guardada. Envíala al cliente con el botón verde."
+- Historial de cotizaciones (captura 12), la más reciente primero: cada una con monto y Chip de estado ("Pendiente", "Aprobada", "Rechazada" o "Anulada"), descripción, "Enviada: {fecha}", "{Estado} el {fecha}" si fue decidida y "Nota del cliente: “{nota}”" (`dr-quote-note`). Sin cotizaciones: "Sin cotizaciones adicionales."
+- Actividad: los eventos nuevos usan los textos del prototipo: "Cotización enviada: $380.000", "Cliente aprobó la cotización" y "Cliente rechazó la cotización: “{nota}”".
 - El botón verde de WhatsApp usa el mensaje de cotización y el texto "Enviar cotización por WhatsApp" cuando hay una pendiente (sección 2.3).
 
 ### 6.2 Lista de autos (`app/(taller)/page.tsx`, `components/ui/CarCard.tsx`)
@@ -209,15 +213,14 @@ El historial muestra también las cotizaciones anuladas, y `styles/components.cs
 
 ### 7.1 Página
 
-Debajo del Stepper muestra la cotización de `AutoPublico.cotizacion`, si existe. La descripción del estado usa `descripcionEstado` (sección 2.4) con `cotizacion?.estado`. Solo se muestra esa cotización, no la lista "Tus respuestas" del prototipo (ver sección 14).
+Debajo del panel de estado (y del panel de recogida, si el auto está listo) muestra la cotización de `AutoPublico.cotizacion`, si existe. La descripción del estado usa `descripcionEstado` (sección 2.4) con `cotizacion?.estado`. Solo se muestra esa cotización: si ya está decidida, va bajo el encabezado "Tu respuesta" (en singular, en vez de la lista "Tus respuestas" del prototipo; ver sección 14).
 
 ### 7.2 Componente `DecisionCotizacion.tsx` (componente de cliente)
 
-- **Pendiente:** QuoteCard con descripción, costo (`formatearCostoCop`) y los botones Aprobar y Rechazar.
-- **Al tocar Rechazar:** los botones se reemplazan por el campo de nota (Field, máximo 140 caracteres), los atajos (NoteChip) y los botones de enviar y cancelar; los textos son los del prototipo.
-- **Aprobada:** muestra "Aprobada el {fecha}" (con `formatearFecha`).
-- **Rechazada:** muestra la confirmación de la captura 11.
-- Si la acción devuelve que la cotización ya no está pendiente (por ejemplo, el taller la reemplazó mientras el cliente decidía), muestra su estado actual con un aviso claro y la página se refresca.
+- **Pendiente (captura 09):** QuoteCard con "Reparación adicional · requiere tu aprobación", descripción, costo (`formatearCostoCop`) y los botones "Aprobar" y "Rechazar".
+- **Al tocar Rechazar (captura 10):** los botones se reemplazan por el campo "¿Por qué la rechazas? (opcional)" (ejemplo "Escribe una breve nota", máximo 140 caracteres, recibe el foco), los atajos (NoteChip; tocar uno pone su texto en el campo), "Enviar rechazo" y "Cancelar".
+- **Decidida (captura 11):** bajo "Tu respuesta", monto y Chip de estado, descripción, "Aprobada el {fecha}" o "Rechazada el {fecha}" (con `formatearFecha`) y, si hay nota, "Tu nota: “{nota}”".
+- Si la acción devuelve una cotización que ya no está pendiente (por ejemplo, el taller la reemplazó mientras el cliente decidía), muestra su estado actual con el aviso "La cotización cambió mientras respondías. Revisa la información actualizada." y la página se refresca. Si el enlace ya no existe, la página se refresca y muestra la de enlace inactivo.
 
 ### 7.3 Sondeo
 
@@ -238,8 +241,8 @@ El valor llega cuando el cliente decide:
 
 ## 10. Componentes del sistema de diseño (`marca-drgarage`)
 
-- **QuoteCard:** cotización pendiente (cliente) e historial (taller).
-- **NoteChip:** atajos de la nota de rechazo y nota mostrada en el historial.
+- **QuoteCard:** cotización pendiente (cliente, `dr-quote`), historial (taller) y "Tu respuesta" (cliente).
+- **NoteChip:** atajos de la nota de rechazo. La nota ya escrita se muestra con `dr-quote-note`, como en el prototipo.
 - **Chip:** estado de cotización en la lista y en el historial.
 - **Field:** formulario de cotización y campo de nota.
 - **Notice:** errores del formulario y de conexión.
@@ -250,7 +253,7 @@ El valor llega cuando el cliente decide:
 
 ## 12. Archivos
 
-**Nuevos:** `lib/dominio/cotizaciones.ts`, `app/auto/[token]/acciones.ts`, `app/auto/[token]/DecisionCotizacion.tsx`, `supabase/migrations/004_create_cotizaciones.sql`, `docs/metricas.sql`.
+**Nuevos:** `lib/dominio/cotizaciones.ts`, `app/auto/[token]/acciones.ts`, `app/auto/[token]/DecisionCotizacion.tsx`, `app/(taller)/autos/[id]/cotizacion/page.tsx`, `app/(taller)/autos/[id]/cotizacion/FormularioCotizacion.tsx`, `supabase/migrations/004_create_cotizaciones.sql`, `docs/metricas.sql`.
 
 **Nuevos (pruebas):** `lib/dominio/estados.test.ts`.
 
@@ -265,7 +268,7 @@ El valor llega cuando el cliente decide:
   - `validarCotizacion` (errores por campo) y `validarNota` (límite de 140).
   - `ATAJOS_NOTA`: tres opciones, con tildes.
 - `lib/dominio/mensajes.test.ts`: texto exacto de la plantilla de cotización, con tildes, ñ y `&`, costo `$380.000`, codificación y prefijo 57.
-- `lib/dominio/transformaciones.test.ts`: `AutoPublico` con cotización nunca trae WhatsApp, `auto_id` ni nota.
+- `lib/dominio/transformaciones.test.ts`: `AutoPublico` con cotización nunca trae WhatsApp ni `auto_id`; la nota solo aparece si la cotización la tiene.
 - `lib/dominio/estados.test.ts`: `descripcionEstado` da, para "Cotización enviada", el texto del prototipo con cotización pendiente, "Recibimos tu respuesta…" con una decidida y el texto del feature 01 sin cotización; los demás estados conservan los textos del feature 01.
 - La verificación final incluye las pruebas del feature 01 y la comprobación a 390 px contra las capturas 08 a 12.
 
@@ -274,3 +277,10 @@ El valor llega cuando el cliente decide:
 - **Chip de cotización en la lista:** el prototipo muestra "Cotización aprobada" o "Cotización rechazada" solo durante las 3 horas siguientes a la decisión. Aquí se muestra siempre, según `ultimaCotizacion`: con el límite, la demostración se quedaría sin indicadores pocas horas después de cargar los datos.
 - **"Tus respuestas" en la página del cliente:** el prototipo lista todas las cotizaciones decididas. Aquí el cliente ve solo la más reciente que no esté anulada (`AutoPublico.cotizacion`).
 - **Costo:** el prototipo quita todo lo que no sea dígito (acepta "380,5" como 3805). Aquí `parsearCosto` lo rechaza; el mensaje de error es el del prototipo.
+- **"Tu respuesta" en singular:** como el cliente ve una sola cotización, el encabezado es "Tu respuesta" en vez de "Tus respuestas".
+- **Errores del formulario:** el prototipo muestra un error a la vez; aquí se validan los dos campos y sus mensajes salen juntos en el mismo bloque de error del prototipo.
+- **Foto de la reparación:** las capturas 08 y 09 incluyen "Agregar foto (opcional)"; no se construye (fuera de alcance).
+- **Ficha:** no se construyen "Ver lo que ve el cliente" (captura 12) ni "Entregar al cliente" (fuera de alcance).
+- **Cotización que cambió mientras el cliente respondía y enlace inexistente:** el prototipo no tiene estos casos; el aviso se redactó aquí (sección 7.2), y el enlace inexistente reutiliza la pantalla de enlace inactivo del feature 01.
+- **Formato de fechas:** las capturas dicen "2 de nov, 6:29 p. m."; se mantiene `formatearFecha` del feature 01 ("2 nov, 6:29 p. m."), que es el formato de la skill de marca.
+- **Barra de demostración:** el selector Mecánico/Cliente y "Enlace abierto de" de las capturas son del prototipo, no de la app.

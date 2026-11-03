@@ -52,9 +52,9 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
   - **Criterio(s)**: Requisito 2.1
   - En `lib/dominio/mensajes.ts`, `armarMensajeWhatsApp` acepta opcionalmente la cotización pendiente y usa la plantilla de la sección 2.3 del diseño, con `formatearCostoCop` y codificada con `encodeURIComponent`. Sin cotización pendiente conserva el mensaje del feature 01.
 
-- [x] 2.5 Transformación `aAutoPublico` con cotización
+- [ ] 2.5 Transformación `aAutoPublico` con cotización
   - **Criterio(s)**: Requisitos 3.1, 4.2
-  - En `lib/dominio/transformaciones.ts`, `aAutoPublico` incluye `cotizacion` (solo los campos de `CotizacionPublica`) y sigue sin exponer WhatsApp, `auto_id` ni la nota.
+  - En `lib/dominio/transformaciones.ts`, `aAutoPublico` incluye `cotizacion` (solo los campos de `CotizacionPublica`, con la nota del cliente) y sigue sin exponer WhatsApp ni `auto_id`.
 
 - [x] 2.6 Descripción del estado según la cotización
   - **Criterio(s)**: Requisitos 3.1, 4.1
@@ -80,23 +80,23 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 4. Acciones del servidor
 
-- [ ] 4.1 Acción del taller: crear cotización
+- [-] 4.1 Acción del taller: crear cotización
   - **Criterio(s)**: Requisitos 1.1, 1.2, 1.3
   - En `app/(taller)/acciones.ts`, con el mismo patrón del formulario de ingreso: valida con `validarCotizacion` (errores por campo y valores conservados), comprueba que el auto existe, llama a `crearCotizacion`, registra el evento `cotizacion_creada`, pasa el auto a "Cotización enviada" con `actualizarEstado` y revalida `/`, `/autos/{id}` y `/auto/{token}`.
 
 - [ ] 4.2 Acción del cliente: decidir cotización
   - **Criterio(s)**: Requisitos 3.1, 4.1, 5.1
-  - Crear `app/auto/[token]/acciones.ts`. Valida que la decisión sea `aprobar` o `rechazar`, que el token corresponda a un auto y que la cotización pertenezca a ese auto (si no, no modifica nada y devuelve el estado existente); valida la nota si rechaza; ejecuta `decidirCotizacion`; si se aplicó, registra `cotizacion_decidida` y revalida las tres rutas; si no se aplicó, devuelve la cotización existente sin error.
+  - Crear `app/auto/[token]/acciones.ts`. Valida que la decisión sea `aprobar` o `rechazar`, que el token corresponda a un auto y que la cotización pertenezca a ese auto (si no, no modifica nada y devuelve la cotización actual del auto del token, nunca la de otro auto; un token inexistente da el enlace inactivo); valida la nota si rechaza; ejecuta `decidirCotizacion`; si se aplicó, registra `cotizacion_decidida` con los textos del prototipo ("Cliente aprobó la cotización" / "Cliente rechazó la cotización: “{nota}”") y revalida las tres rutas; si no se aplicó, devuelve la cotización existente sin error.
 
 ### 5. Interfaz del taller
 
 - [ ] 5.1 Formulario de cotización en la ficha
   - **Criterio(s)**: Requisitos 1.1, 1.3
-  - En `app/(taller)/autos/[id]/`: botón "Cotización adicional" y formulario (pantalla 08) con Field para descripción y costo, errores con Notice y valores conservados. Textos del prototipo.
+  - En `app/(taller)/autos/[id]/`: botón "Cotización adicional" y formulario en su propia pantalla `/autos/{id}/cotizacion` (captura 08) con encabezado y botón de volver, Field para descripción y costo, errores en el bloque de error y valores conservados; sin "Agregar foto". Al guardar vuelve a la ficha con el aviso "Cotización guardada. Envíala al cliente con el botón verde." Textos del prototipo (sección 6.1 del diseño).
 
 - [ ] 5.2 Historial de cotizaciones en la ficha
   - **Criterio(s)**: Requisitos 4.2, 5.2
-  - Lista de todas las cotizaciones (pantalla 12) con estado (Chip), monto, descripción, fecha de envío, fecha de decisión (`formatearFecha`) y nota del cliente (NoteChip).
+  - Lista de todas las cotizaciones (pantalla 12) con estado (Chip), monto, descripción, fecha de envío, fecha de decisión (`formatearFecha`) y "Nota del cliente: “{nota}”" (`dr-quote-note`); sin cotizaciones, "Sin cotizaciones adicionales." Sin "Ver lo que ve el cliente".
 
 - [ ] 5.3 Botón de WhatsApp con mensaje de cotización
   - **Criterio(s)**: Requisito 2.1
@@ -118,7 +118,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 - [ ] 6.1 Componente de decisión del cliente
   - **Criterio(s)**: Requisitos 3.1, 4.1
-  - Crear `app/auto/[token]/DecisionCotizacion.tsx` (componente de cliente): QuoteCard pendiente con Aprobar y Rechazar; al tocar Rechazar, campo de nota (máximo 140) con atajos (NoteChip), enviar y cancelar. Tras aprobar muestra "Aprobada el {fecha}"; tras rechazar, la confirmación de la captura 11. Si la acción devuelve una cotización que ya no está pendiente, muestra su estado actual con un aviso.
+  - Crear `app/auto/[token]/DecisionCotizacion.tsx` (componente de cliente): QuoteCard pendiente con Aprobar y Rechazar; al tocar Rechazar, campo de nota (máximo 140) con atajos (NoteChip), enviar y cancelar. Tras decidir muestra "Tu respuesta" con "Aprobada el {fecha}" o "Rechazada el {fecha}" y "Tu nota: “{nota}”" (captura 11). Si la acción devuelve una cotización que ya no está pendiente, muestra su estado actual con el aviso de la sección 7.2 del diseño.
 
 - [ ] 6.2 Página pública con la cotización
   - **Criterio(s)**: Requisitos 3.1, 4.1
@@ -158,7 +158,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 - [ ] 8.4 Pruebas de `aAutoPublico` con cotización
   - **Criterio(s)**: Requisitos 3.1, 4.2
-  - `lib/dominio/transformaciones.test.ts`: con cotización, el resultado nunca incluye WhatsApp, `auto_id` ni nota.
+  - `lib/dominio/transformaciones.test.ts`: con cotización, el resultado nunca incluye WhatsApp ni `auto_id`; la nota solo aparece si la cotización la tiene.
 
 - [ ] 8.5 Pruebas de la descripción del estado
   - **Criterio(s)**: Requisitos 3.1, 4.1
