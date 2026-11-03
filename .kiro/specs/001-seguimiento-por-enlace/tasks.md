@@ -84,35 +84,35 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 ### 3. Cliente Supabase
 
-- [ ] 3.1 Crear cliente Supabase con clave de servicio
+- [x] 3.1 Crear cliente Supabase con clave de servicio
   - **Criterio(s)**: Requisito 1.1
   - Crear cliente en `lib/supabase/cliente.ts` usando paquete `server-only`. NO usa variables con prefijo NEXT_PUBLIC_.
 
-- [ ] 3.2 Implementar función para insertar auto
+- [x] 3.2 Implementar función para insertar auto
   - **Criterio(s)**: Requisito 1.1
   - Crear función `insertarAuto` en `lib/supabase/consultas.ts`. Genera token público, inserta con estado 'recibido', devuelve auto insertado.
 
-- [ ] 3.3 Implementar función para obtener auto por token
+- [x] 3.3 Implementar función para obtener auto por token
   - **Criterio(s)**: Requisito 4.1
   - Crear función `obtenerAutoPorToken` en `lib/supabase/consultas.ts`. Devuelve null si no existe.
 
-- [ ] 3.4 Implementar función para actualizar estado
+- [x] 3.4 Implementar función para actualizar estado
   - **Criterio(s)**: Requisito 2.1
   - Crear función `actualizarEstado` en `lib/supabase/consultas.ts`. Actualiza campo estado y actualizado_en automáticamente.
 
-- [ ] 3.5 Implementar función para insertar evento
+- [x] 3.5 Implementar función para insertar evento
   - **Criterio(s)**: Requisito 2.1
   - Crear función `insertarEvento` en `lib/supabase/consultas.ts`. Registra evento con tipo y descripción.
 
-- [ ] 3.6 Implementar función para listar autos
+- [x] 3.6 Implementar función para listar autos
   - **Criterio(s)**: Requisito 1.1
   - Crear función `listarAutos` en `lib/supabase/consultas.ts`. Devuelve los autos ordenados por `actualizado_en`, el más reciente primero.
 
-- [ ] 3.7 Implementar función para obtener auto por id
+- [x] 3.7 Implementar función para obtener auto por id
   - **Criterio(s)**: Requisitos 2.1, 3.1
   - Crear función `obtenerAutoPorId` en `lib/supabase/consultas.ts`. Devuelve null si no existe. Se usa solo en la vista del taller.
 
-- [ ] 3.8 Implementar función para listar eventos de un auto
+- [x] 3.8 Implementar función para listar eventos de un auto
   - **Criterio(s)**: Requisito 2.1
   - Crear función `listarEventos` en `lib/supabase/consultas.ts`. Devuelve los eventos del auto, el más reciente primero.
 
