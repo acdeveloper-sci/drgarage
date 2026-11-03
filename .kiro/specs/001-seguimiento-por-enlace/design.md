@@ -187,10 +187,10 @@ Cada botón toca el estado correspondiente. El estado actual se muestra marcado.
 4 pasos con estados:
 1. Recibido
 2. En proceso
-3. Cotización
+3. Cotización enviada
 4. Listo
 
-El paso actual se muestra activo; los anteriores, completados. Sin emoji: los íconos son SVG de trazo, como indica la skill `marca-drgarage`.
+El paso actual se muestra activo; los anteriores, completados. En Listo, los cuatro pasos se muestran completados (captura 15). Sin emoji: los íconos son SVG de trazo, como indica la skill `marca-drgarage`.
 
 #### Información Mostrada
 

@@ -140,11 +140,11 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 ### 5. Vista del Cliente
 
-- [ ] 5.1 Crear página pública /auto/[token]
+- [x] 5.1 Crear página pública /auto/[token]
   - **Criterio(s)**: Requisitos 4.1, 4.2, 4.3
-  - Crear `app/auto/[token]/page.tsx` como Server Component. Muestra "Este enlace ya no está activo" si token no existe. Muestra saludo con el primer nombre, placa (dr-plate), modelo, estado, stepper de progreso y hora de última actualización (`formatearFecha`). Título de la pestaña: "Tu auto · Taller Don Ramiro". NUNCA muestra WhatsApp.
+  - Crear `app/auto/[token]/page.tsx` como Server Component. Muestra "Este enlace ya no está activo" si token no existe. Muestra saludo con el primer nombre, placa (dr-plate), modelo, estado, stepper de progreso y hora de última actualización (`formatearFecha`). En estado Listo y en el enlace inactivo, panel "Dónde recogerlo" con la dirección (Av. Bolivar, #33-79) y el horario (LU-VI 9:00 AM a 5:00 PM) del taller. Título de la pestaña: "Tu auto · Taller Don Ramiro". NUNCA muestra WhatsApp.
 
-- [ ] 5.2 Implementar sondeo para actualizaciones
+- [x] 5.2 Implementar sondeo para actualizaciones
   - **Criterio(s)**: Requisito 5.1
   - Crear componente de cliente que actualice la página cada 15-20 segundos usando router.refresh(). Pausa si pestaña oculta (Page Visibility API).
 
