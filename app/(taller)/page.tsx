@@ -25,6 +25,9 @@ export default async function ListaAutos() {
             <div className="dr-muted">Cuando llegue uno, toca “Ingresar auto”.</div>
           </div>
         )}
+        <Link href="/conoce" className="dr-btn dr-btn--link">
+          ¿Qué es drGarage?
+        </Link>
       </main>
     </>
   );

@@ -31,3 +31,20 @@ export function IconoCheck() {
     </svg>
   );
 }
+
+export function IconoTelefono() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" />
+    </svg>
+  );
+}
+
+export function IconoDocumento() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14 3H6v18h12V7z" />
+      <path d="M14 3v4h4M9 14l2 2 4-4" />
+    </svg>
+  );
+}
