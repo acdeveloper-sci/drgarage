@@ -10,7 +10,5 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["lib/**/*.test.ts"],
-    // Temporal: aún no hay pruebas. Se quita al agregar las de la sección 6.
-    passWithNoTests: true,
   },
 });
