@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# drGarage
 
-## Getting Started
+Car status tracking for a small auto repair shop. Mechanics register cars and update their status from a phone; clients follow progress through a private link, with no app or sign-up.
 
-First, run the development server:
+**Live demo:** https://<your-project>.vercel.app
+**Demo client links:** `/auto/demo-recibido`, `/auto/demo-en-proceso`, `/auto/demo-cotizacion`, `/auto/demo-listo`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+> The shop view (`/`) has no access control in this version. Use demo data only.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Register a car (client name, WhatsApp, plate, model, reported problem)
+- Change status: Recibido, En proceso, Cotización enviada, Listo
+- Prefilled WhatsApp message with the client's private link (`wa.me`)
+- Public client page: plate, model, status, 4-step progress and last update; refreshes every ~17 s
+- Connection errors never show unsaved data as saved (retry button)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Stack
 
-## Learn More
+Next.js 16 (App Router), TypeScript, Supabase (Postgres, server-only access), Vitest + fast-check.
 
-To learn more about Next.js, take a look at the following resources:
+## Run locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. `npm install`
+2. Create a Supabase project and run `supabase/migrations/*.sql` in order in the SQL Editor.
+3. Copy `.env.example` to `.env.local` and fill `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (a secret key, server only) and `NEXT_PUBLIC_SITE_URL`.
+4. `npm run dev`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+| Command | What it does |
+|---|---|
+| `npm test` | Domain unit and property tests |
+| `npm run lint` / `npm run build` | Lint and production build |
+| `npm run seed:demo` | Recreate the 4 demo cars |
+| `npm run seed:clear` | Delete only demo data (`demo-` tokens) |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## How it was built
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Spec-driven: steering in `.kiro/steering/`, feature spec in `.kiro/specs/001-seguimiento-por-enlace/` (requirements, design, tasks), implemented with Claude Code following `AGENTS.md`. The visual design in `design/` (tokens, components, prototype and screens) was made with Claude Design. Brand rules: `.kiro/skills/marca-drgarage/`.
+
+## Known limits
+
+- No access control on the shop view; Server Actions can be called directly.
+- The "Auto registrado" notice reappears on reload.
+- Demo tokens (`demo-…`) are guessable on purpose; never use them with real data.
