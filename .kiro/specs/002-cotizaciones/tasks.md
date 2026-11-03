@@ -90,27 +90,27 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 5. Interfaz del taller
 
-- [ ] 5.1 Formulario de cotización en la ficha
+- [x] 5.1 Formulario de cotización en la ficha
   - **Criterio(s)**: Requisitos 1.1, 1.3
   - En `app/(taller)/autos/[id]/`: botón "Cotización adicional" y formulario en su propia pantalla `/autos/{id}/cotizacion` (captura 08) con encabezado y botón de volver, Field para descripción y costo, errores en el bloque de error y valores conservados; sin "Agregar foto". Al guardar vuelve a la ficha con el aviso "Cotización guardada. Envíala al cliente con el botón verde." Textos del prototipo (sección 6.1 del diseño).
 
-- [ ] 5.2 Historial de cotizaciones en la ficha
+- [x] 5.2 Historial de cotizaciones en la ficha
   - **Criterio(s)**: Requisitos 4.2, 5.2
   - Lista de todas las cotizaciones (pantalla 12) con estado (Chip), monto, descripción, fecha de envío, fecha de decisión (`formatearFecha`) y "Nota del cliente: “{nota}”" (`dr-quote-note`); sin cotizaciones, "Sin cotizaciones adicionales." Sin "Ver lo que ve el cliente".
 
-- [ ] 5.3 Botón de WhatsApp con mensaje de cotización
+- [x] 5.3 Botón de WhatsApp con mensaje de cotización
   - **Criterio(s)**: Requisito 2.1
   - En la ficha, con una cotización pendiente el botón verde abre `wa.me` con el mensaje de cotización y dice "Enviar cotización por WhatsApp"; sin pendiente sigue diciendo "Avisar al cliente por WhatsApp". El enlace usa `NEXT_PUBLIC_SITE_URL`. Se sigue registrando el evento de aviso del feature 01.
 
-- [ ] 5.4 Indicador de cotización en la lista
+- [x] 5.4 Indicador de cotización en la lista
   - **Criterio(s)**: Requisito 3.2
   - `CarCard` muestra un Chip según `ultimaCotizacion`: "Esperando aprobación", "Cotización aprobada" o "Cotización rechazada", con las clases del sistema de diseño (sin colores escritos a mano). Se muestra siempre que haya `ultimaCotizacion`, sin el límite de 3 horas del prototipo (desviación deliberada, sección 14 del diseño).
 
-- [ ] 5.5 Errores de conexión en el taller
+- [x] 5.5 Errores de conexión en el taller
   - **Criterio(s)**: Sección 8 del diseño
   - Si falla la red al crear la cotización: Notice de error con botón Reintentar; nada se muestra como guardado hasta que el servidor confirme y se conserva lo escrito.
 
-- [ ] 5.6 Chip "Anulada" en el sistema de diseño
+- [x] 5.6 Chip "Anulada" en el sistema de diseño
   - **Criterio(s)**: Requisito 5.2
   - En `styles/components.css`, agregar `dr-chip--anulada` según `patrones-adicionales.md` (fondo `var(--line)`, texto `var(--ink)`), para las cotizaciones anuladas del historial (5.2). Sin colores literales.
 

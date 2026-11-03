@@ -10,11 +10,12 @@ interface Props {
   id: string;
   estado: Estado;
   urlWhatsApp: string;
+  cotizacionPendiente: boolean; // cambia el texto del botón verde (texto del prototipo)
   avisoInicial: string | null;
 }
 
 // Aviso, botón de WhatsApp y botones de estado de la ficha. El estado marcado es siempre el que confirmó el servidor.
-export function AccionesAuto({ id, estado, urlWhatsApp, avisoInicial }: Props) {
+export function AccionesAuto({ id, estado, urlWhatsApp, cotizacionPendiente, avisoInicial }: Props) {
   const [aviso, setAviso] = useState(avisoInicial);
   const [fallido, setFallido] = useState<Estado | null>(null); // cambio que no se guardó, para reintentar
   const [guardando, iniciar] = useTransition();
@@ -66,7 +67,7 @@ export function AccionesAuto({ id, estado, urlWhatsApp, avisoInicial }: Props) {
       )}
       <a className="dr-btn dr-btn--whatsapp" href={urlWhatsApp} target="_blank" rel="noopener" onClick={avisar}>
         <IconoMensaje />
-        Avisar al cliente por WhatsApp
+        {cotizacionPendiente ? "Enviar cotización por WhatsApp" : "Avisar al cliente por WhatsApp"}
       </a>
       <h2 className="dr-eyebrow">Cambiar estado</h2>
       <div className="dr-status-grid" aria-busy={guardando}>

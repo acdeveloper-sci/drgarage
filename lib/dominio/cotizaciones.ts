@@ -83,3 +83,19 @@ export function textoEventoDecision(estado: "aprobada" | "rechazada", nota?: str
   if (estado === "aprobada") return "Cliente aprobó la cotización";
   return nota ? `Cliente rechazó la cotización: “${nota}”` : "Cliente rechazó la cotización";
 }
+
+// Chip de estado en el historial y en "Tu respuesta" (textos del prototipo, QLABEL).
+export const ETIQUETAS_COTIZACION: Record<EstadoCotizacion, string> = {
+  pendiente: "Pendiente",
+  aprobada: "Aprobada",
+  rechazada: "Rechazada",
+  anulada: "Anulada",
+};
+
+// Chip bajo la tarjeta de la lista según la última cotización no anulada (textos del prototipo).
+export function avisoCotizacionLista(estado: EstadoCotizacion | undefined): string | null {
+  if (estado === "pendiente") return "Esperando aprobación";
+  if (estado === "aprobada") return "Cotización aprobada";
+  if (estado === "rechazada") return "Cotización rechazada";
+  return null;
+}

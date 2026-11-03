@@ -122,3 +122,12 @@ a.dr-card:active{border-color:var(--ink)}
 .dr-auto-id{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;font-size:16px;font-weight:600}
 .dr-label-fuerte{font-weight:700}
 .dr-hint{font-size:14px;text-align:center;color:var(--muted)}
+
+/* ---- Cotizaciones (feature 02): medidas del prototipo, design/prototipo/prototipo.html ---- */
+.dr-input--monto{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.dr-nota-pie{margin:0;font-size:15px}
+.dr-monto{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.dr-caption--fuerte{color:var(--ink);font-weight:700}
+.dr-card > .dr-chip{align-self:flex-start}
+/* Chip "Anulada" (design/design-system/patrones-adicionales.md) */
+.dr-chip--anulada{background:var(--line);color:var(--ink)}
