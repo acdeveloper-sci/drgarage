@@ -27,7 +27,7 @@ App móvil para un taller de 4 mecánicos que la usan con las manos sucias, y p�
 
 - **Tamaños táctiles:** cualquier control ≥ 44 px (`--touch-min`); botones de acción ≥ 64 px (`--button-height`); botones de estado ≥ 88 px (`--status-button-height`).
 - **Colores con significado fijo:**
-  - `plate` (amarillo de placa): insignia de placa, botón "Ingresar auto", foco. Nada más.
+  - `plate` (amarillo de placa): insignia de placa, botón "Ingresar auto", foco y los acentos de la portada `/conoce` (ver `references/patrones-adicionales.md`). Nada más.
   - `whatsapp` (verde): solo el botón de WhatsApp.
   - Estados, siempre en este orden: Recibido (`status-recibido`), En proceso (`status-proceso`), Cotización enviada (`status-cotizacion`), Listo (`status-listo`).
   - `reject`: errores y rechazo.

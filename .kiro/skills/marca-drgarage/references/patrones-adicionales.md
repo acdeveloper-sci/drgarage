@@ -33,3 +33,12 @@ Pantallas y piezas que están en `design/prototipo/prototipo.html` pero aún no 
 ## Cerrar sesión
 
 - `dr-btn--link` al final de la lista del taller.
+
+## Portada `/conoce` — acentos en amarillo de placa
+
+Única pantalla, además de la placa, "Ingresar auto" y el foco, donde se usa `plate`. Siempre con texto `plate-ink` (contraste 11,5:1, ≥ 4,5:1).
+
+- Botón principal "Ver el taller de ejemplo" en el encabezado, bajo el subtítulo: `dr-btn--accent`. Debajo, enlace secundario "Ver lo que ve tu cliente" (`dr-btn--link` en `on-ink`). El botón del final de la página sigue en `--primary`.
+- Franja de 6 px en `plate` bajo el encabezado (`dr-header--franja`).
+- Círculo de los íconos de beneficios y números de los pasos de "Así funciona": fondo `plate`, texto o ícono `plate-ink`, 44 px.
+- El resto de los colores de la portada solo aparecen en piezas reales de la app con su significado (placa, chips de estado y de cotización).

@@ -52,10 +52,16 @@ const PASOS: { titulo: string; texto: string; muestra: ReactNode }[] = [
 export default function Conoce() {
   return (
     <div className="dr-app dr-shell">
-      <header className="dr-header dr-header--stack">
+      <header className="dr-header dr-header--stack dr-header--franja">
         <div className="dr-sub">drGarage · Para talleres pequeños</div>
         <h1>Que tus clientes dejen de llamar para preguntar por su carro.</h1>
         <p className="dr-header__lema">Seguimiento por enlace de WhatsApp y aprobación de reparaciones con fecha y hora, desde el celular.</p>
+        <Link href="/" className="dr-btn dr-btn--accent">
+          Ver el taller de ejemplo
+        </Link>
+        <Link href="/auto/demo-cotizacion" className="dr-btn dr-btn--link">
+          Ver lo que ve tu cliente
+        </Link>
       </header>
       <main className="dr-body">
         <h2 className="dr-eyebrow">Así se ve un auto en tu lista</h2>
