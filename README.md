@@ -2,7 +2,7 @@
 
 Car status tracking for a small auto repair shop. Mechanics register cars and update their status from a phone; clients follow progress through a private link, with no app or sign-up.
 
-**Live demo:** https://<your-project>.vercel.app
+**Live demo:** https://drgarage.vercel.app
 **Demo client links:** `/auto/demo-recibido`, `/auto/demo-en-proceso`, `/auto/demo-cotizacion`, `/auto/demo-listo`
 
 > The shop view (`/`) has no access control in this version. Use demo data only.
