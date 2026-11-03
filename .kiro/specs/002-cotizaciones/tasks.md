@@ -26,11 +26,11 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 1. Base de datos
 
-- [ ] 1.1 Crear la migración de `cotizaciones`
+- [x] 1.1 Crear la migración de `cotizaciones`
   - **Criterio(s)**: Requisitos 1.1, 1.2, 5.1
   - Crear `supabase/migrations/004_create_cotizaciones.sql` con el SQL de la sección 1.1 del diseño: tabla con `decidida_en`, llave foránea a `autos(id)` sin `on delete cascade`, restricciones de integridad (una cotización decidida siempre tiene `decidida_en`; la nota solo existe si fue rechazada y tiene máximo 140 caracteres), índice único parcial por auto con cotización pendiente, índice `(auto_id, enviada_en desc)` y RLS activado sin políticas.
 
-- [ ] 1.2 Aplicar la migración en Supabase (paso manual de la persona)
+- [!] 1.2 Aplicar la migración en Supabase (paso manual de la persona)
   - **Criterio(s)**: Requisitos 1 a 5
   - La persona ejecuta `004_create_cotizaciones.sql` en el SQL Editor de Supabase y confirma que la tabla `cotizaciones` existe con RLS activado. El agente pide este paso, la marca como bloqueada `[!]` mientras espera la confirmación y no continúa con la sección 3 sin ella.
 
