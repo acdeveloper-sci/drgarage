@@ -303,7 +303,7 @@ Después de analizar, las propiedades testeables son:
 1. **Normalización de placa**: Toda placa se guarda en mayúsculas
 2. **Validación de WhatsApp**: Solo se aceptan exactamente 10 dígitos
 3. **Transformación a vista pública**: Auto → AutoPublico excluye WhatsApp siempre
-4. **Armado de mensaje WhatsApp**: El mensaje contiene todos los campos requeridos
+4. **Armado de mensaje WhatsApp**: El mensaje incluye primer nombre, modelo, placa y enlace, y comunica el estado actual con la plantilla de su contexto
 5. **Transiciones de estado**: Solo permite estados válidos del diagrama
 
 Estas propiedades son complementarias y no redundantes. Cada una prueba un aspecto diferente del sistema.
@@ -312,7 +312,7 @@ Estas propiedades son complementarias y no redundantes. Cada una prueba un aspec
 
 ### Property 1: Normalización de placa
 
-*Para cualquier* cadena de placa ingresada, el sistema SHALL convertirla a mayúsculas antes de guardarla.
+*Para cualquier* cadena de placa ingresada, el sistema SHALL quitarle los espacios y guiones y convertirla a mayúsculas antes de guardarla ("KMT 482" y "KMT-482" se guardan como "KMT482").
 
 **Validates: Requirements 1.1**
 
@@ -336,7 +336,7 @@ Estas propiedades son complementarias y no redundantes. Cada una prueba un aspec
 
 ### Property 4: Armado del mensaje de WhatsApp
 
-*Para cualquier* auto con datos válidos, el mensaje generado SHALL incluir: primer nombre del cliente, modelo, placa, estado actual y enlace público del auto.
+*Para cualquier* auto con datos válidos, el mensaje generado SHALL incluir: primer nombre del cliente, modelo, placa y enlace público del auto, y SHALL comunicar el estado actual con la plantilla de su contexto (Recibido, Listo u otro estado).
 
 **Validates: Requirements 3.1**
 
@@ -400,7 +400,7 @@ Estas propiedades son complementarias y no redundantes. Cada una prueba un aspec
 #### Testeables con Property (Vitest + fast-check):
 
 1. **Normalización de placa**
-   - Generar strings aleatorios, verificar que `.toUpperCase()` es el resultado
+   - Generar strings aleatorios, verificar que el resultado no contiene espacios, guiones ni minúsculas y que normalizar dos veces da lo mismo que normalizar una vez (idempotencia)
 
 2. **Validación de WhatsApp**
    - Generar strings, verificar que solo los de 10 dígitos pasan

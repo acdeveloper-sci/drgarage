@@ -1,7 +1,8 @@
 export const ERROR_WHATSAPP = "Revisa el WhatsApp: debe tener 10 dígitos, por ejemplo 300 123 4567.";
 
+// "KMT 482" y "kmt-482" → "KMT482".
 export function normalizarPlaca(placa: string): string {
-  return placa.toUpperCase();
+  return placa.replace(/[\s-]/g, "").toUpperCase();
 }
 
 export type ResultadoWhatsApp = { ok: true; whatsapp: string } | { ok: false; error: string };

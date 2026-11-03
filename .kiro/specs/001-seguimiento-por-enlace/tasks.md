@@ -60,7 +60,7 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 - [x] 2.2 Implementar normalización de placa
   - **Criterio(s)**: Requisito 1.1, Property 1
-  - Crear función `normalizarPlaca` en `lib/dominio/normalizacion.ts` que convierta cualquier placa a mayúsculas.
+  - Crear función `normalizarPlaca` en `lib/dominio/normalizacion.ts` que quite espacios y guiones y convierta la placa a mayúsculas ("KMT 482" y "KMT-482" → "KMT482").
 
 - [x] 2.3 Implementar validación de WhatsApp
   - **Criterio(s)**: Requisito 1.2, Property 2
@@ -152,7 +152,7 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 - [ ] 6.1 Tests de normalización de placa
   - **Criterio(s)**: Property 1
-  - Escribir tests en `lib/dominio/normalizacion.test.ts` para la función normalizarPlaca.
+  - Escribir tests en `lib/dominio/normalizacion.test.ts` para la función normalizarPlaca, incluyendo placas con espacios y guiones ("KMT 482", "KMT-482").
 
 - [ ] 6.2 Tests de validación de WhatsApp
   - **Criterio(s)**: Property 2
@@ -160,7 +160,7 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 - [ ] 6.3 Tests de armado de mensaje WhatsApp
   - **Criterio(s)**: Property 4
-  - Escribir tests en `lib/dominio/mensajes.test.ts` para la función armarMensajeWhatsApp, incluyendo texto con tildes, ñ y `&`.
+  - Escribir tests en `lib/dominio/mensajes.test.ts` para la función armarMensajeWhatsApp: el texto exacto de cada plantilla (Recibido, Listo y otro estado), incluyendo texto con tildes, ñ y `&`, y por propiedad que el mensaje incluye primer nombre, modelo, placa y enlace.
 
 - [ ] 6.4 Tests de transformación Auto → AutoPublico
   - **Criterio(s)**: Property 3
