@@ -74,7 +74,7 @@ El flujo principal:
 |---------|------|---------------|-------------|
 | `id` | uuid | PK, default gen_random_uuid() | Identificador |
 | `auto_id` | uuid | FK → autos.id, not null | Auto relacionado |
-| `tipo` | text | not null | Tipo: cambio_estado, aviso_enviado |
+| `tipo` | text | not null | Tipo: ingreso, cambio_estado, aviso_enviado |
 | `descripcion` | text | not null | Descripción legible del evento |
 | `creado_en` | timestamptz | not null, default now() | Fecha del evento |
 
@@ -140,12 +140,12 @@ El flujo principal:
 
 ```
 Campo: Nombre del cliente
-  - Label: "¿A nombre de quién queda el auto?"
-  - Placeholder: "Tu nombre"
+  - Label: "Nombre del cliente"
+  - Placeholder: "Ej. María López"
   - Validación: obligatorio
 
 Campo: WhatsApp
-  - Label: "WhatsApp"
+  - Label: "WhatsApp del cliente"
   - Placeholder: "300 123 4567"
   - Validación: 10 dígitos, muestra formato con espacio
 
@@ -155,13 +155,13 @@ Campo: Placa
   - Validación: mayúsculas, obligatoria
 
 Campo: Modelo
-  - Label: "Modelo del auto"
-  - Placeholder: "Toyota Corolla"
+  - Label: "Modelo"
+  - Placeholder: "Mazda 3 2018"
   - Validación: obligatoria
 
 Campo: Problema (opcional)
-  - Label: "¿Qué le pasa?"
-  - Placeholder: "Frenos, ruido, etc."
+  - Label: "Problema reportado"
+  - Placeholder: "Ej. Ruido al frenar"
 ```
 
 #### Botones de Estado
@@ -232,7 +232,7 @@ type Estado = 'recibido' | 'proceso' | 'cotizacion' | 'listo';
 interface Evento {
   id: string;
   autoId: string;
-  tipo: 'cambio_estado' | 'aviso_enviado';
+  tipo: 'ingreso' | 'cambio_estado' | 'aviso_enviado';
   descripcion: string;
   creadoEn: Date;
 }
@@ -359,6 +359,7 @@ Estas propiedades son complementarias y no redundantes. Cada una prueba un aspec
 | Token no existe | 404 + mensaje "Este enlace ya no está activo" | Mostrar mensaje |
 | Error de conexión a Supabase | 500 + mensaje genérico | Reintentar |
 | Validación fallida | 400 + detalles del error | Mostrar cómo corregir |
+| Falla de red entre `actualizarEstado` e `insertarEvento` (dos llamadas, sin transacción) | El estado queda guardado sin su evento; se acepta en este feature | Reintentar: la acción vuelve a ejecutar ambas llamadas y crea el evento |
 
 ### Errores del Cliente (navegador)
 
@@ -370,7 +371,7 @@ Estas propiedades son complementarias y no redundantes. Cada una prueba un aspec
 ### Mensajes de Error (voz del producto)
 
 - WhatsApp inválido: "Revisa el WhatsApp: debe tener 10 dígitos, por ejemplo 300 123 4567."
-- Campo obligatorio: "Completa este campo"
+- Campo obligatorio: "Completa nombre, placa y modelo."
 - Token no existe: "Este enlace ya no está activo"
 - Error de conexión: "No se pudo guardar. Revisa tu conexión e intenta de nuevo."
 

@@ -56,7 +56,7 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 - [x] 2.1 Definir tipos TypeScript para el dominio
   - **Criterio(s)**: Requisitos 1.1, 4.1
-  - Crear archivos de tipos en `lib/dominio/`. Tipo `Estado` como union type. Tipo `Auto`, `AutoPublico` (solo primerNombre, placa, modelo, estado y actualizadoEn; sin WhatsApp), `Evento` con tipos: 'cambio_estado' | 'aviso_enviado'.
+  - Crear archivos de tipos en `lib/dominio/`. Tipo `Estado` como union type. Tipo `Auto`, `AutoPublico` (solo primerNombre, placa, modelo, estado y actualizadoEn; sin WhatsApp), `Evento` con tipos: 'ingreso' | 'cambio_estado' | 'aviso_enviado'.
 
 - [x] 2.2 Implementar normalización de placa
   - **Criterio(s)**: Requisito 1.1, Property 1
@@ -118,23 +118,23 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 ### 4. Vista del Taller
 
-- [ ] 4.1 Crear estructura de rutas y layout del taller
+- [x] 4.1 Crear estructura de rutas y layout del taller
   - **Criterio(s)**: Requisito 1.1
-  - Crear directorio `app/(taller)/`. Crear layout.tsx con AppHeader "Taller Don Ramiro". Aplicar estilos dr-. Título de la pestaña del navegador: "drGarage".
+  - Crear directorio `app/(taller)/`. Crear layout.tsx con el contenedor `dr-app` y el título de la pestaña del navegador: "drGarage". Cada página lleva su propio AppHeader, como en las capturas; el de la lista muestra "Taller Don Ramiro".
 
-- [ ] 4.2 Crear página principal con lista de autos
+- [x] 4.2 Crear página principal con lista de autos
   - **Criterio(s)**: Requisito 1.1
   - Crear `app/(taller)/page.tsx` como Server Component que usa `listarAutos` y muestra CarCard para cada uno (placa, estado, modelo, cliente y hora con `formatearFecha`). Botón "Ingresar auto" visible. Eliminar la página de plantilla `app/page.tsx`: dos páginas que resuelven a `/` hacen fallar a Next.js.
 
-- [ ] 4.3 Crear formulario de ingreso de auto
+- [x] 4.3 Crear formulario de ingreso de auto
   - **Criterio(s)**: Requisitos 1.1, 1.2
-  - Crear formulario con campos: nombre, WhatsApp, placa, modelo, problema (opcional). Server Action para procesar. Validación: campos obligatorios, WhatsApp 10 dígitos. Error muestra mensaje y conserva datos. Al guardar, abre la ficha del auto.
+  - Crear formulario con campos: nombre, WhatsApp, placa, modelo, problema (opcional). Server Action para procesar. Validación: campos obligatorios, WhatsApp 10 dígitos. Error muestra mensaje y conserva datos. Al guardar, crea el evento `ingreso` ("Ingreso registrado") y abre la ficha del auto; si solo falla ese evento, el auto queda creado y la ficha se abre igual, para que un reintento no duplique el auto.
 
-- [ ] 4.4 Crear ficha del auto con botones de estado
+- [x] 4.4 Crear ficha del auto con botones de estado
   - **Criterio(s)**: Requisitos 2.1, 3.1
-  - Crear la página de detalle en `app/(taller)/autos/[id]/page.tsx` (con `autos`, no `auto`: `/auto/[token]` ya es la ruta pública, y dos segmentos dinámicos distintos en la misma ruta hacen fallar a Next.js). Muestra los datos del cliente y el problema, StatusButton para los 4 estados, el botón verde de WhatsApp que abre `wa.me` con `armarMensajeWhatsApp`, y la actividad del auto (eventos con fecha y hora). Server Action `cambiarEstado` que actualiza el estado, crea el evento automáticamente y muestra un Notice para avisar al cliente. Las tarjetas de la lista (4.2) enlazan a esta página.
+  - Crear la página de detalle en `app/(taller)/autos/[id]/page.tsx` (con `autos`, no `auto`: `/auto/[token]` ya es la ruta pública, y dos segmentos dinámicos distintos en la misma ruta hacen fallar a Next.js). Muestra los datos del cliente y el problema, StatusButton para los 4 estados, el botón verde de WhatsApp que abre `wa.me` con `armarMensajeWhatsApp`, y la actividad del auto (eventos con fecha y hora). Server Action `cambiarEstado` que actualiza el estado, crea el evento automáticamente y muestra un Notice para avisar al cliente. Al tocar el botón de WhatsApp se registra el evento `aviso_enviado` ("Aviso enviado por WhatsApp"). Las tarjetas de la lista (4.2) enlazan a esta página.
 
-- [ ] 4.5 Manejo de errores de conexión al guardar
+- [x] 4.5 Manejo de errores de conexión al guardar
   - **Criterio(s)**: Requisitos 6.1, 6.2
   - En el formulario de ingreso y en el cambio de estado: si la Server Action falla por error de red, mostrar un Notice de error (`role="alert"`) con "No se pudo guardar. Revisa tu conexión e intenta de nuevo." y un botón Reintentar. No marcar la operación como completada ni cambiar el estado mostrado hasta que el servidor confirme el guardado. Conservar lo escrito en el formulario.
 
