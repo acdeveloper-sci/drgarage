@@ -196,7 +196,7 @@ El paso actual se muestra activo; los anteriores, completados. En Listo, los cua
 
 - **Placa**: insignia grande (clase `dr-plate`)
 - **Modelo**: texto secundario
-- **Estado**: nombre del estado actual
+- **Estado**: nombre del estado actual y su descripción, con los textos del prototipo. Desviación: para "Cotización enviada" el texto es "Te enviamos una cotización por una reparación adicional. Respóndenos por WhatsApp.", porque aprobar o rechazar cotizaciones es otro feature.
 - **Última actualización**: "Actualizado hace X minutos" o fecha/hora
 
 ---

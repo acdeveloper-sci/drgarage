@@ -10,11 +10,12 @@ export const ETIQUETAS_ESTADO: Record<Estado, string> = {
   listo: "Listo",
 };
 
-// Lo que significa cada estado para el cliente (textos del prototipo).
+// Lo que significa cada estado para el cliente (textos del prototipo, salvo cotizacion).
 export const DESCRIPCIONES_ESTADO: Record<Estado, string> = {
   recibido: "Tu vehículo ya está en el taller, en espera de revisión.",
   proceso: "Nuestros mecánicos están trabajando en tu vehículo.",
-  cotizacion: "Hay una reparación adicional esperando tu aprobación.",
+  // Desviación del prototipo: aprobar o rechazar cotizaciones es otro feature (ver design.md).
+  cotizacion: "Te enviamos una cotización por una reparación adicional. Respóndenos por WhatsApp.",
   listo: "Tu vehículo está listo. Puedes pasar a recogerlo.",
 };
 

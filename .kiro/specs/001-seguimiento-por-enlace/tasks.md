@@ -142,7 +142,7 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 - [x] 5.1 Crear página pública /auto/[token]
   - **Criterio(s)**: Requisitos 4.1, 4.2, 4.3
-  - Crear `app/auto/[token]/page.tsx` como Server Component. Muestra "Este enlace ya no está activo" si token no existe. Muestra saludo con el primer nombre, placa (dr-plate), modelo, estado, stepper de progreso y hora de última actualización (`formatearFecha`). En estado Listo y en el enlace inactivo, panel "Dónde recogerlo" con la dirección (Av. Bolivar, #33-79) y el horario (LU-VI 9:00 AM a 5:00 PM) del taller. Título de la pestaña: "Tu auto · Taller Don Ramiro". NUNCA muestra WhatsApp.
+  - Crear `app/auto/[token]/page.tsx` como Server Component. Muestra "Este enlace ya no está activo" si token no existe. Muestra saludo con el primer nombre, placa (dr-plate), modelo, estado, stepper de progreso y hora de última actualización (`formatearFecha`). En estado Listo y en el enlace inactivo, panel "Dónde recogerlo" con la dirección (Av. Bolívar, #33-79) y el horario (Lunes a viernes, 9:00 a. m. a 5:00 p. m.) del taller. Título de la pestaña: "Tu auto · Taller Don Ramiro". NUNCA muestra WhatsApp.
 
 - [x] 5.2 Implementar sondeo para actualizaciones
   - **Criterio(s)**: Requisito 5.1
@@ -150,23 +150,23 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 ### 6. Pruebas con Vitest
 
-- [ ] 6.1 Tests de normalización de placa
+- [x] 6.1 Tests de normalización de placa
   - **Criterio(s)**: Property 1
   - Escribir tests en `lib/dominio/normalizacion.test.ts` para la función normalizarPlaca, incluyendo placas con espacios y guiones ("KMT 482", "KMT-482").
 
-- [ ] 6.2 Tests de validación de WhatsApp
+- [x] 6.2 Tests de validación de WhatsApp
   - **Criterio(s)**: Property 2
   - Escribir tests en `lib/dominio/normalizacion.test.ts` para la función validarWhatsApp, incluyendo 9 y 11 dígitos, texto no numérico y el caso con espacios ("300 123 4567").
 
-- [ ] 6.3 Tests de armado de mensaje WhatsApp
+- [x] 6.3 Tests de armado de mensaje WhatsApp
   - **Criterio(s)**: Property 4
   - Escribir tests en `lib/dominio/mensajes.test.ts` para la función armarMensajeWhatsApp: el texto exacto de cada plantilla (Recibido, Listo y otro estado), incluyendo texto con tildes, ñ y `&`, y por propiedad que el mensaje incluye primer nombre, modelo, placa y enlace.
 
-- [ ] 6.4 Tests de transformación Auto → AutoPublico
+- [x] 6.4 Tests de transformación Auto → AutoPublico
   - **Criterio(s)**: Property 3
   - Escribir tests en `lib/dominio/transformaciones.test.ts` para verificar exclusión de WhatsApp.
 
-- [ ] 6.5 Tests de token público y de formato de fecha
+- [x] 6.5 Tests de token público y de formato de fecha
   - **Criterio(s)**: Property 5, Requisito 4.1
   - Escribir tests en `lib/dominio/token.test.ts` (longitud mínima equivalente a 128 bits y tokens distintos entre llamadas) y en `lib/dominio/fechas.test.ts` (zona America/Bogota y formato es-CO).
 
