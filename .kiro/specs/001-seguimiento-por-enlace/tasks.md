@@ -46,9 +46,9 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 - [x] 1.3 Configurar RLS y seguridad
   - **Criterio(s)**: Requisito 4.2
-  - Activar RLS en ambas tablas. Sin políticas para rol anónimo (acceso solo desde servidor). Crear índice en `autos.token_publico` y `eventos.auto_id`.
+  - Activar RLS en ambas tablas. Sin políticas para rol anónimo (acceso solo desde servidor). Crear índice en `eventos.auto_id`; `autos.token_publico` queda indexado por su restricción UNIQUE.
 
-- [!] 1.4 Aplicar las migraciones en Supabase (paso manual de la persona)
+- [x] 1.4 Aplicar las migraciones en Supabase (paso manual de la persona)
   - **Criterio(s)**: Requisitos 1.1, 2.1, 4.2
   - La persona ejecuta en orden los archivos de `supabase/migrations/` en el SQL Editor del proyecto Supabase y confirma que las tablas `autos` y `eventos` existen con RLS activado. El agente pide este paso, la marca como bloqueada `[!]` mientras espera la confirmación y no continúa con la sección 3 sin ella.
 

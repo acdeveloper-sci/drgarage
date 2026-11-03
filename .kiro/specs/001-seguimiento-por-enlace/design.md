@@ -86,7 +86,7 @@ El flujo principal:
 
 ### Índices
 
-- `autos.token_publico` — para búsquedas por token público
+- `autos.token_publico` — para búsquedas por token público; queda indexado por su restricción UNIQUE (sin índice adicional)
 - `eventos.auto_id` — para obtener historial de un auto
 
 ---
