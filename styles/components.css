@@ -111,3 +111,14 @@ a.dr-card:active{border-color:var(--ink)}
 .dr-notice--error{background:var(--reject-bg);border-color:var(--reject);color:var(--reject);display:flex;flex-direction:column;gap:var(--space-2)}
 .dr-input--plate{text-transform:uppercase;font-weight:800;letter-spacing:.06em}
 @media (prefers-reduced-motion:no-preference){.dr-flash{animation:dr-flash .9s ease-out}@keyframes dr-flash{from{box-shadow:0 0 0 4px var(--plate)}to{box-shadow:0 0 0 0 transparent}}}
+/* Vista del cliente */
+.dr-steps{list-style:none;margin:0;padding:var(--space-1) 0 0}
+.dr-saludo h1{margin:0;font-size:24px;font-weight:800;line-height:1.2}
+.dr-saludo__taller{font-size:14px;font-weight:700;color:var(--muted)}
+.dr-panel--estado{border-radius:var(--radius-xl);gap:var(--space-3)}
+.dr-panel--inactivo{border-radius:var(--radius-xl);padding:20px var(--space-4);gap:10px}
+.dr-panel--inactivo h1{margin:0;font-size:28px;font-weight:800;line-height:1.05;text-wrap:balance}
+.dr-panel--recogida{gap:var(--space-1)}
+.dr-auto-id{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;font-size:16px;font-weight:600}
+.dr-label-fuerte{font-weight:700}
+.dr-hint{font-size:14px;text-align:center;color:var(--muted)}

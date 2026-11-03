@@ -1,7 +1,6 @@
 import { ETIQUETAS_ESTADO } from "./estados";
+import { NOMBRE_TALLER } from "./taller";
 import type { Auto } from "./tipos";
-
-const TALLER = "Taller Don Ramiro";
 
 export type DatosMensaje = Pick<Auto, "nombreCliente" | "whatsapp" | "modelo" | "placa" | "estado" | "tokenPublico">;
 
@@ -20,7 +19,7 @@ function textoMensaje(auto: DatosMensaje, enlace: string): string {
   const vehiculo = `${auto.modelo} (${auto.placa})`;
   switch (auto.estado) {
     case "recibido":
-      return `${saludo}, recibimos tu ${vehiculo} en ${TALLER}. Sigue el avance aquí: ${enlace}`;
+      return `${saludo}, recibimos tu ${vehiculo} en ${NOMBRE_TALLER}. Sigue el avance aquí: ${enlace}`;
     case "listo":
       return `${saludo}, tu ${vehiculo} ya está listo para recoger. Detalles aquí: ${enlace}`;
     default:
