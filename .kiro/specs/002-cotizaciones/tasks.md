@@ -9,13 +9,13 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 ```json
 {
   "waves": [
-    { "id": 0, "tasks": ["1.1", "2.1"] },
-    { "id": 1, "tasks": ["1.2", "2.2", "2.3", "8.1"] },
-    { "id": 2, "tasks": ["2.4", "2.5", "3.1", "3.2", "3.3", "7.1", "7.2", "7.3", "8.2"] },
-    { "id": 3, "tasks": ["3.4", "4.1", "8.3", "8.4"] },
-    { "id": 4, "tasks": ["4.2", "5.1", "5.2", "5.3", "5.4"] },
-    { "id": 5, "tasks": ["5.5", "6.1", "9.2"] },
-    { "id": 6, "tasks": ["6.2", "6.3"] },
+    { "id": 0, "tasks": ["1.1", "2.1", "2.6", "5.6"] },
+    { "id": 1, "tasks": ["1.2", "2.2", "2.3", "8.1", "8.5"] },
+    { "id": 2, "tasks": ["2.4", "2.5", "3.1", "7.1", "7.2", "7.3", "8.2"] },
+    { "id": 3, "tasks": ["3.2", "3.3", "3.4", "8.3", "8.4"] },
+    { "id": 4, "tasks": ["4.1", "4.2", "5.2", "5.3", "5.4"] },
+    { "id": 5, "tasks": ["5.1", "6.1", "9.2"] },
+    { "id": 6, "tasks": ["5.5", "6.2", "6.3"] },
     { "id": 7, "tasks": ["9.1"] },
     { "id": 8, "tasks": ["9.3"] }
   ]
@@ -42,7 +42,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 - [ ] 2.2 Costo, validación y nota
   - **Criterio(s)**: Requisitos 1.1, 1.3, 2.1, 4.1
-  - En el mismo módulo: `parsearCosto`, `formatearCostoCop`, `validarCotizacion` y `validarNota`, como en la sección 2.1 del diseño. Los mensajes de error dicen cómo corregir y salen del prototipo.
+  - En el mismo módulo: `parsearCosto`, `formatearCostoCop`, `validarCotizacion` y `validarNota`, como en la sección 2.1 del diseño. Los mensajes de error son los del prototipo ("Escribe la descripción de la reparación." y "Escribe el costo en pesos, solo números."); el costo sigue la regla del diseño y rechaza "380,5".
 
 - [ ] 2.3 Tipos del dominio
   - **Criterio(s)**: Requisitos 1.1, 3.1, 4.2, 5.2
@@ -55,6 +55,10 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 - [ ] 2.5 Transformación `aAutoPublico` con cotización
   - **Criterio(s)**: Requisitos 3.1, 4.2
   - En `lib/dominio/transformaciones.ts`, `aAutoPublico` incluye `cotizacion` (solo los campos de `CotizacionPublica`) y sigue sin exponer WhatsApp, `auto_id` ni la nota.
+
+- [ ] 2.6 Descripción del estado según la cotización
+  - **Criterio(s)**: Requisitos 3.1, 4.1
+  - En `lib/dominio/estados.ts`, `descripcionEstado(estado, hayCotizacionPendiente)` como en la sección 2.4 del diseño: para "Cotización enviada", con pendiente "Hay una reparación adicional esperando tu aprobación." y sin ella "El taller está revisando una reparación adicional para tu vehículo."; los demás estados conservan los textos del feature 01.
 
 ### 3. Acceso a datos
 
@@ -96,15 +100,19 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 - [ ] 5.3 Botón de WhatsApp con mensaje de cotización
   - **Criterio(s)**: Requisito 2.1
-  - En la ficha, con una cotización pendiente el botón verde abre `wa.me` con el mensaje de cotización; el enlace usa `NEXT_PUBLIC_SITE_URL`. Se sigue registrando el evento de aviso del feature 01.
+  - En la ficha, con una cotización pendiente el botón verde abre `wa.me` con el mensaje de cotización y dice "Enviar cotización por WhatsApp"; sin pendiente sigue diciendo "Avisar al cliente por WhatsApp". El enlace usa `NEXT_PUBLIC_SITE_URL`. Se sigue registrando el evento de aviso del feature 01.
 
 - [ ] 5.4 Indicador de cotización en la lista
   - **Criterio(s)**: Requisito 3.2
-  - `CarCard` muestra un Chip según `ultimaCotizacion`: "Esperando aprobación", "Cotización aprobada" o "Cotización rechazada", con las clases del sistema de diseño (sin colores escritos a mano).
+  - `CarCard` muestra un Chip según `ultimaCotizacion`: "Esperando aprobación", "Cotización aprobada" o "Cotización rechazada", con las clases del sistema de diseño (sin colores escritos a mano). Se muestra siempre que haya `ultimaCotizacion`, sin el límite de 3 horas del prototipo (desviación deliberada, sección 14 del diseño).
 
 - [ ] 5.5 Errores de conexión en el taller
   - **Criterio(s)**: Sección 8 del diseño
   - Si falla la red al crear la cotización: Notice de error con botón Reintentar; nada se muestra como guardado hasta que el servidor confirme y se conserva lo escrito.
+
+- [ ] 5.6 Chip "Anulada" en el sistema de diseño
+  - **Criterio(s)**: Requisito 5.2
+  - En `styles/components.css`, agregar `dr-chip--anulada` según `patrones-adicionales.md` (fondo `var(--line)`, texto `var(--ink)`), para las cotizaciones anuladas del historial (5.2). Sin colores literales.
 
 ### 6. Interfaz del cliente
 
@@ -114,7 +122,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 - [ ] 6.2 Página pública con la cotización
   - **Criterio(s)**: Requisitos 3.1, 4.1
-  - En `app/auto/[token]/page.tsx`, renderizar `DecisionCotizacion` debajo del Stepper cuando `AutoPublico.cotizacion` existe. La página sigue dinámica y sin exponer el WhatsApp.
+  - En `app/auto/[token]/page.tsx`, renderizar `DecisionCotizacion` debajo del Stepper cuando `AutoPublico.cotizacion` existe, y mostrar la descripción del estado con `descripcionEstado`. Solo se muestra esa cotización, sin la lista "Tus respuestas" del prototipo (desviación deliberada, sección 14 del diseño). La página sigue dinámica y sin exponer el WhatsApp.
 
 - [ ] 6.3 Errores de conexión del cliente
   - **Criterio(s)**: Sección 8 del diseño
@@ -151,6 +159,10 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 - [ ] 8.4 Pruebas de `aAutoPublico` con cotización
   - **Criterio(s)**: Requisitos 3.1, 4.2
   - `lib/dominio/transformaciones.test.ts`: con cotización, el resultado nunca incluye WhatsApp, `auto_id` ni nota.
+
+- [ ] 8.5 Pruebas de la descripción del estado
+  - **Criterio(s)**: Requisitos 3.1, 4.1
+  - `lib/dominio/estados.test.ts`: `descripcionEstado` da el texto del prototipo para "Cotización enviada" con cotización pendiente, un texto que no pide aprobar sin ella, y los textos del feature 01 para los demás estados.
 
 ### 9. Verificación
 

@@ -7,9 +7,11 @@ Se construye sobre el feature 01 (ya desplegado): no cambia sus rutas, tablas ni
 ### 1.1 Migración `supabase/migrations/004_create_cotizaciones.sql`
 
 ```sql
-create table cotizaciones (
+-- Cotizaciones de reparaciones adicionales. Fechas en UTC (timestamptz).
+-- Sin on delete cascade: lo que el cliente aprobó o rechazó no se borra con el auto.
+create table public.cotizaciones (
   id uuid primary key default gen_random_uuid(),
-  auto_id uuid not null references autos(id),
+  auto_id uuid not null references public.autos (id),
   descripcion text not null,
   costo_cop integer not null check (costo_cop > 0),
   estado text not null default 'pendiente'
@@ -21,12 +23,14 @@ create table cotizaciones (
   check (nota is null or estado = 'rechazada')
 );
 
+-- Una sola cotización pendiente por auto, aun con dos envíos simultáneos.
 create unique index cotizaciones_una_pendiente_por_auto
-  on cotizaciones (auto_id) where estado = 'pendiente';
+  on public.cotizaciones (auto_id) where estado = 'pendiente';
 create index cotizaciones_auto_enviada_idx
-  on cotizaciones (auto_id, enviada_en desc);
+  on public.cotizaciones (auto_id, enviada_en desc);
 
-alter table cotizaciones enable row level security;
+-- RLS sin políticas: solo el servidor de Next.js (service_role) accede.
+alter table public.cotizaciones enable row level security;
 ```
 
 Decisiones:
@@ -94,7 +98,7 @@ export function formatearCostoCop(n: number): string {
 
 Además, en el mismo módulo:
 
-- `validarCotizacion({ descripcion, costo })`: devuelve `{ ok: true, descripcion, costoCop }` o `{ ok: false, errores: { descripcion?, costo? } }`. La descripción se recorta y no puede quedar vacía; el costo pasa por `parsearCosto`. Los mensajes de error dicen cómo corregir y salen del prototipo (`design/prototipo/prototipo.html`); si el prototipo no los trae: "Describe la reparación adicional." y "Escribe un costo mayor que 0, solo con números (ej. 380000)."
+- `validarCotizacion({ descripcion, costo })`: devuelve `{ ok: true, descripcion, costoCop }` o `{ ok: false, errores: { descripcion?, costo? } }`. La descripción se recorta y no puede quedar vacía; el costo pasa por `parsearCosto`. Los mensajes de error dicen cómo corregir y son los del prototipo (`design/prototipo/prototipo.html`): "Escribe la descripción de la reparación." y "Escribe el costo en pesos, solo números." La validación del costo es más estricta que la del prototipo (ver sección 14).
 - `validarNota(texto)`: recorta; la nota es opcional y de máximo 140 caracteres.
 
 ### 2.2 Cambios en `lib/dominio/tipos.ts`
@@ -124,6 +128,9 @@ export type CotizacionPublica = Pick<
 
 ### 2.3 Mensaje de WhatsApp (`lib/dominio/mensajes.ts`)
 
+El texto del botón verde también depende de la cotización: con una pendiente es "Enviar cotización por WhatsApp" (texto del prototipo); sin ella sigue siendo "Avisar al cliente por WhatsApp".
+
+
 `armarMensajeWhatsApp` recibe opcionalmente la cotización pendiente. Con ella usa esta plantilla (texto de la entrada; manda el prototipo si difiere), con el texto codificado con `encodeURIComponent` y el prefijo 57 como en el feature 01:
 
 ```
@@ -131,6 +138,15 @@ Hola {primerNombre}, en Taller Don Ramiro encontramos una reparación adicional 
 ```
 
 `{costo}` usa `formatearCostoCop`. Sin cotización pendiente, el mensaje es el del feature 01.
+
+### 2.4 Descripción del estado para el cliente (`lib/dominio/estados.ts`)
+
+El feature 01 usaba para "Cotización enviada" un texto que pedía responder por WhatsApp, porque aprobar aún no existía. Con este feature la descripción depende de si hay una cotización pendiente:
+
+- **Con cotización pendiente:** "Hay una reparación adicional esperando tu aprobación." (texto del prototipo).
+- **Sin cotización pendiente** (ya decidida, o estado puesto a mano): "El taller está revisando una reparación adicional para tu vehículo." No pide aprobar nada.
+
+Se expone como `descripcionEstado(estado, hayCotizacionPendiente)`; los demás estados conservan los textos del feature 01.
 
 ## 3. Acceso a datos (`lib/supabase/consultas.ts`)
 
@@ -178,17 +194,21 @@ La acción es pública (solo el token no adivinable la protege), por lo que no c
 
 - Botón "Cotización adicional" que abre el formulario (pantalla 08): campos descripción y costo (Field), error con Notice y valores conservados.
 - Historial de cotizaciones (pantalla 12): cada una con estado (Chip), monto, descripción, fecha de envío, fecha de decisión y nota del cliente (NoteChip).
-- El botón verde de WhatsApp usa el mensaje de cotización cuando hay una pendiente.
+- El botón verde de WhatsApp usa el mensaje de cotización y el texto "Enviar cotización por WhatsApp" cuando hay una pendiente (sección 2.3).
 
 ### 6.2 Lista de autos (`app/(taller)/page.tsx`, `components/ui/CarCard.tsx`)
 
-Debajo de cada tarjeta se muestra un Chip con el texto del prototipo, según `ultimaCotizacion`: "Esperando aprobación" (pendiente), "Cotización aprobada" o "Cotización rechazada". Se usan las clases del sistema de diseño (`dr-chip--pendiente`, `dr-chip--aprobada`, `dr-chip--rechazada`), sin colores escritos a mano.
+Debajo de cada tarjeta se muestra un Chip con el texto del prototipo, según `ultimaCotizacion`: "Esperando aprobación" (pendiente), "Cotización aprobada" o "Cotización rechazada". Se usan las clases del sistema de diseño (`dr-chip--pendiente`, `dr-chip--aprobada`, `dr-chip--rechazada`), sin colores escritos a mano. El chip se muestra siempre que haya `ultimaCotizacion`, sin el límite de 3 horas del prototipo (ver sección 14).
+
+### 6.3 Chip "Anulada" (`styles/components.css`)
+
+El historial muestra también las cotizaciones anuladas, y `styles/components.css` no tiene clase para ellas. Se agrega `dr-chip--anulada` según `patrones-adicionales.md` del sistema de diseño: fondo `var(--line)` y texto `var(--ink)`.
 
 ## 7. Interfaz del cliente (`app/auto/[token]/`)
 
 ### 7.1 Página
 
-Debajo del Stepper muestra la cotización de `AutoPublico.cotizacion`, si existe.
+Debajo del Stepper muestra la cotización de `AutoPublico.cotizacion`, si existe. La descripción del estado usa `descripcionEstado` (sección 2.4) con `cotizacion?.estado === 'pendiente'`. Solo se muestra esa cotización, no la lista "Tus respuestas" del prototipo (ver sección 14).
 
 ### 7.2 Componente `DecisionCotizacion.tsx` (componente de cliente)
 
@@ -231,7 +251,9 @@ El valor llega cuando el cliente decide:
 
 **Nuevos:** `lib/dominio/cotizaciones.ts`, `app/auto/[token]/acciones.ts`, `app/auto/[token]/DecisionCotizacion.tsx`, `supabase/migrations/004_create_cotizaciones.sql`, `docs/metricas.sql`.
 
-**Modificados:** `lib/dominio/tipos.ts`, `lib/dominio/mensajes.ts`, `lib/supabase/consultas.ts`, `app/(taller)/acciones.ts`, `app/(taller)/page.tsx`, `app/(taller)/autos/[id]/page.tsx`, `app/(taller)/autos/[id]/AccionesAuto.tsx`, `app/auto/[token]/page.tsx`, `components/ui/CarCard.tsx`, `scripts/seed-demo.mjs`, `scripts/clear-demo.mjs`.
+**Nuevos (pruebas):** `lib/dominio/estados.test.ts`.
+
+**Modificados:** `lib/dominio/tipos.ts`, `lib/dominio/estados.ts`, `lib/dominio/mensajes.ts`, `lib/supabase/consultas.ts`, `app/(taller)/acciones.ts`, `app/(taller)/page.tsx`, `app/(taller)/autos/[id]/page.tsx`, `app/(taller)/autos/[id]/AccionesAuto.tsx`, `app/auto/[token]/page.tsx`, `components/ui/CarCard.tsx`, `scripts/seed-demo.mjs`, `scripts/clear-demo.mjs`, `styles/components.css`.
 
 ## 13. Pruebas (Vitest y fast-check, sin red)
 
@@ -243,4 +265,11 @@ El valor llega cuando el cliente decide:
   - `ATAJOS_NOTA`: tres opciones, con tildes.
 - `lib/dominio/mensajes.test.ts`: texto exacto de la plantilla de cotización, con tildes, ñ y `&`, costo `$380.000`, codificación y prefijo 57.
 - `lib/dominio/transformaciones.test.ts`: `AutoPublico` con cotización nunca trae WhatsApp, `auto_id` ni nota.
+- `lib/dominio/estados.test.ts`: `descripcionEstado` da el texto del prototipo para "Cotización enviada" con cotización pendiente, un texto que no pide aprobar sin ella, y los textos del feature 01 para los demás estados.
 - La verificación final incluye las pruebas del feature 01 y la comprobación a 390 px contra las capturas 08 a 12.
+
+## 14. Desviaciones deliberadas del prototipo
+
+- **Chip de cotización en la lista:** el prototipo muestra "Cotización aprobada" o "Cotización rechazada" solo durante las 3 horas siguientes a la decisión. Aquí se muestra siempre, según `ultimaCotizacion`: con el límite, la demostración se quedaría sin indicadores pocas horas después de cargar los datos.
+- **"Tus respuestas" en la página del cliente:** el prototipo lista todas las cotizaciones decididas. Aquí el cliente ve solo la más reciente que no esté anulada (`AutoPublico.cotizacion`).
+- **Costo:** el prototipo quita todo lo que no sea dígito (acepta "380,5" como 3805). Aquí `parsearCosto` lo rechaza; el mensaje de error es el del prototipo.
