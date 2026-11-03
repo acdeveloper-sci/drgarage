@@ -54,31 +54,31 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 ### 2. Lógica de Dominio
 
-- [ ] 2.1 Definir tipos TypeScript para el dominio
+- [x] 2.1 Definir tipos TypeScript para el dominio
   - **Criterio(s)**: Requisitos 1.1, 4.1
   - Crear archivos de tipos en `lib/dominio/`. Tipo `Estado` como union type. Tipo `Auto`, `AutoPublico` (solo primerNombre, placa, modelo, estado y actualizadoEn; sin WhatsApp), `Evento` con tipos: 'cambio_estado' | 'aviso_enviado'.
 
-- [ ] 2.2 Implementar normalización de placa
+- [x] 2.2 Implementar normalización de placa
   - **Criterio(s)**: Requisito 1.1, Property 1
   - Crear función `normalizarPlaca` en `lib/dominio/normalizacion.ts` que convierta cualquier placa a mayúsculas.
 
-- [ ] 2.3 Implementar validación de WhatsApp
+- [x] 2.3 Implementar validación de WhatsApp
   - **Criterio(s)**: Requisito 1.2, Property 2
   - Crear función `validarWhatsApp` en `lib/dominio/normalizacion.ts` que quite espacios y guiones y acepte solo si quedan exactamente 10 dígitos (por ejemplo, "300 123 4567" es válido). Devuelve el número normalizado de 10 dígitos o el error.
 
-- [ ] 2.4 Implementar generación de token público
+- [x] 2.4 Implementar generación de token público
   - **Criterio(s)**: Requisito 1.1, Property 5
   - Crear función `generarTokenPublico` en `lib/dominio/token.ts` usando crypto.randomBytes(32) para 256 bits, codificado en base64url.
 
-- [ ] 2.5 Implementar armado de mensaje WhatsApp
+- [x] 2.5 Implementar armado de mensaje WhatsApp
   - **Criterio(s)**: Requisito 3.1, Property 4
   - Crear función `armarMensajeWhatsApp` en `lib/dominio/mensajes.ts` que genere el mensaje con primer nombre, modelo, placa, estado y enlace, y devuelva la URL `https://wa.me/57{whatsapp}?text=...`. Texto codificado con encodeURIComponent. El enlace se arma con `NEXT_PUBLIC_SITE_URL` + `/auto/{token}`.
 
-- [ ] 2.6 Implementar transformación Auto → AutoPublico
+- [x] 2.6 Implementar transformación Auto → AutoPublico
   - **Criterio(s)**: Requisito 4.2, Property 3
   - Crear función `aAutoPublico` en `lib/dominio/transformaciones.ts` que excluya WhatsApp y derive el primer nombre.
 
-- [ ] 2.7 Implementar formato de fechas
+- [x] 2.7 Implementar formato de fechas
   - **Criterio(s)**: Requisitos 2.1, 4.1
   - Crear función `formatearFecha` en `lib/dominio/fechas.ts` que reciba una fecha UTC y la muestre en `America/Bogota` con locale `es-CO`, con el formato `2 nov, 10:42 a. m.`.
 
