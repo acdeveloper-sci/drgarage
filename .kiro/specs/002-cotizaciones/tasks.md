@@ -130,15 +130,15 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 7. Datos de demostración y métricas
 
-- [ ] 7.1 Cotizaciones en el seed
+- [x] 7.1 Cotizaciones en el seed
   - **Criterio(s)**: Sección 11 del diseño
   - En `scripts/seed-demo.mjs`: una cotización pendiente en `demo-cotizacion`, una aprobada en `demo-en-proceso` y una rechazada con nota en `demo-listo`, con sus eventos y fechas coherentes (`actualizado_en` igual al del último evento, como en el seed actual).
 
-- [ ] 7.2 Cotizaciones en el clear
+- [x] 7.2 Cotizaciones en el clear
   - **Criterio(s)**: Sección 11 del diseño
   - En `scripts/clear-demo.mjs`: borrar primero las cotizaciones de los autos de demostración, luego sus eventos y por último los autos. Solo filas con el token `demo-…`.
 
-- [ ] 7.3 Consulta SQL de métricas
+- [x] 7.3 Consulta SQL de métricas
   - **Criterio(s)**: Métricas de éxito
   - Crear `docs/metricas.sql` con la consulta de la sección 4 de `docs/specs-entrada/002-cotizaciones.md` (tiempo de decisión, respuesta en el día, tasa de respuesta, activación y retención), que excluye los autos de demostración.
 
