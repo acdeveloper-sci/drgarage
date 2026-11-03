@@ -131,3 +131,6 @@ a.dr-card:active{border-color:var(--ink)}
 .dr-card > .dr-chip{align-self:flex-start}
 /* Chip "Anulada" (design/design-system/patrones-adicionales.md) */
 .dr-chip--anulada{background:var(--line);color:var(--ink)}
+.dr-quote .dr-eyebrow{color:var(--status-cotizacion-fg)}
+.dr-quote__descripcion{font-size:18px;font-weight:600}
+.dr-notechips{display:flex;flex-wrap:wrap;gap:var(--space-2)}

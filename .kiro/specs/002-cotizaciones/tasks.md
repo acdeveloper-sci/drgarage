@@ -116,15 +116,15 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 6. Interfaz del cliente
 
-- [ ] 6.1 Componente de decisión del cliente
+- [x] 6.1 Componente de decisión del cliente
   - **Criterio(s)**: Requisitos 3.1, 4.1
   - Crear `app/auto/[token]/DecisionCotizacion.tsx` (componente de cliente): QuoteCard pendiente con Aprobar y Rechazar; al tocar Rechazar, campo de nota (máximo 140) con atajos (NoteChip), enviar y cancelar. Tras decidir muestra "Tu respuesta" con "Aprobada el {fecha}" o "Rechazada el {fecha}" y "Tu nota: “{nota}”" (captura 11). Si la acción devuelve una cotización que ya no está pendiente, muestra su estado actual con el aviso de la sección 7.2 del diseño.
 
-- [ ] 6.2 Página pública con la cotización
+- [x] 6.2 Página pública con la cotización
   - **Criterio(s)**: Requisitos 3.1, 4.1
   - En `app/auto/[token]/page.tsx`, renderizar `DecisionCotizacion` debajo del Stepper cuando `AutoPublico.cotizacion` existe, y mostrar la descripción del estado con `descripcionEstado`. Solo se muestra esa cotización, sin la lista "Tus respuestas" del prototipo (desviación deliberada, sección 14 del diseño). La página sigue dinámica y sin exponer el WhatsApp.
 
-- [ ] 6.3 Errores de conexión del cliente
+- [x] 6.3 Errores de conexión del cliente
   - **Criterio(s)**: Sección 8 del diseño
   - Si falla la red al decidir: Notice de error con botón Reintentar; no se muestra como decidida y no se pierde la nota escrita.
 

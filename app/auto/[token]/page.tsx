@@ -1,13 +1,15 @@
 import { notFound } from "next/navigation";
 import { PanelRecogida } from "@/components/ui/PanelRecogida";
+import { RespuestaCotizacion } from "@/components/ui/RespuestaCotizacion";
 import { Stepper } from "@/components/ui/Stepper";
-import { DESCRIPCIONES_ESTADO, ETIQUETAS_ESTADO } from "@/lib/dominio/estados";
+import { ETIQUETAS_ESTADO, descripcionEstado } from "@/lib/dominio/estados";
 import { formatearFecha } from "@/lib/dominio/fechas";
 import { NOMBRE_TALLER } from "@/lib/dominio/taller";
 import { obtenerAutoPorToken } from "@/lib/supabase/consultas";
+import { DecisionCotizacion } from "./DecisionCotizacion";
 import { Sondeo } from "./Sondeo";
 
-// Vista pública: solo recibe un AutoPublico (sin WhatsApp ni datos internos).
+// Vista pública: solo recibe un AutoPublico (sin WhatsApp ni datos internos del taller).
 export default async function SeguimientoAuto({ params }: PageProps<"/auto/[token]">) {
   const { token } = await params;
   const auto = await obtenerAutoPorToken(token);
@@ -27,7 +29,7 @@ export default async function SeguimientoAuto({ params }: PageProps<"/auto/[toke
         <div className="dr-stack">
           <h2 className="dr-eyebrow">Estado actual</h2>
           <div className="type-status">{ETIQUETAS_ESTADO[auto.estado]}</div>
-          <div>{DESCRIPCIONES_ESTADO[auto.estado]}</div>
+          <div>{descripcionEstado(auto.estado, auto.cotizacion?.estado)}</div>
           <div className="dr-caption">
             Actualizado: <time dateTime={auto.actualizadoEn.toISOString()}>{formatearFecha(auto.actualizadoEn)}</time>
           </div>
@@ -35,6 +37,11 @@ export default async function SeguimientoAuto({ params }: PageProps<"/auto/[toke
         <Stepper estado={auto.estado} />
       </section>
       {auto.estado === "listo" && <PanelRecogida />}
+      <DecisionCotizacion
+        token={token}
+        cotizacion={auto.cotizacion ?? null}
+        respuesta={auto.cotizacion ? <RespuestaCotizacion cotizacion={auto.cotizacion} /> : null}
+      />
       <p className="dr-hint">Esta página se actualiza sola. No necesitas registrarte ni instalar nada.</p>
       <Sondeo />
     </main>

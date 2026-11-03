@@ -253,7 +253,7 @@ El valor llega cuando el cliente decide:
 
 ## 12. Archivos
 
-**Nuevos:** `lib/dominio/cotizaciones.ts`, `app/auto/[token]/acciones.ts`, `app/auto/[token]/DecisionCotizacion.tsx`, `app/(taller)/autos/[id]/cotizacion/page.tsx`, `app/(taller)/autos/[id]/cotizacion/FormularioCotizacion.tsx`, `supabase/migrations/004_create_cotizaciones.sql`, `docs/metricas.sql`.
+**Nuevos:** `lib/dominio/cotizaciones.ts`, `app/auto/[token]/acciones.ts`, `app/auto/[token]/DecisionCotizacion.tsx`, `app/(taller)/autos/[id]/cotizacion/page.tsx`, `app/(taller)/autos/[id]/cotizacion/FormularioCotizacion.tsx`, `components/ui/RespuestaCotizacion.tsx` ("Tu respuesta", sin `"use client"` para renderizar las fechas en el servidor), `supabase/migrations/004_create_cotizaciones.sql`, `docs/metricas.sql`.
 
 **Nuevos (pruebas):** `lib/dominio/estados.test.ts`.
 
