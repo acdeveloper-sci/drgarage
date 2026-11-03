@@ -46,3 +46,5 @@ Inventario, facturación, gestión de repuestos, cuentas por mecánico, registro
 - Especificación completa del MVP: `docs/especificacion.md`
 - Diseño (tokens, componentes, prototipos): `design/`
 - Spec de cada feature: `.kiro/specs/`
+- ICP y personas: ver `docs/producto/icp-y-personas.md`.
+- 
