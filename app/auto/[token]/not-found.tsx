@@ -6,7 +6,7 @@ export default function EnlaceInactivo() {
   return (
     <main className="dr-body">
       <div className="dr-saludo__taller">{NOMBRE_TALLER}</div>
-      <section className="dr-panel dr-panel--inactivo">
+      <section className="dr-panel dr-panel--mensaje">
         <h1>Este enlace ya no está activo</h1>
         <div>Los enlaces de seguimiento funcionan hasta 30 días después de entregar el vehículo.</div>
         <div className="dr-muted">Si necesitas algo, comunícate con el taller.</div>
