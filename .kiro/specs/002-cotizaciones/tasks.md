@@ -144,23 +144,23 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 8. Pruebas con Vitest
 
-- [ ] 8.1 Pruebas de estados y decisión única
+- [x] 8.1 Pruebas de estados y decisión única
   - **Criterio(s)**: Requisito 5.1
   - `lib/dominio/cotizaciones.test.ts`: `esEstadoCotizacion`, `transicionValida` (solo desde pendiente), `esFinal` y `resolverDecision`, con una propiedad de idempotencia (decidir dos veces equivale a decidir una; una anulada no cambia).
 
-- [ ] 8.2 Pruebas de costo, validación y nota
+- [x] 8.2 Pruebas de costo, validación y nota
   - **Criterio(s)**: Requisitos 1.3, 2.1, 4.1
   - En el mismo archivo de pruebas: `parsearCosto` y `formatearCostoCop` ("$380.000", "380000" y "1.250.000" válidos; "0", "12.5", "380,5", vacío y texto no válidos; por propiedad, `parsearCosto(formatearCostoCop(n)) === n`), `validarCotizacion`, `validarNota` (límite de 140) y `ATAJOS_NOTA`.
 
-- [ ] 8.3 Pruebas del mensaje con cotización
+- [x] 8.3 Pruebas del mensaje con cotización
   - **Criterio(s)**: Requisito 2.1
   - `lib/dominio/mensajes.test.ts`: texto exacto de la plantilla de cotización (tildes, ñ, `&`, costo `$380.000`), codificación y prefijo 57; el mensaje sin cotización no cambia.
 
-- [ ] 8.4 Pruebas de `aAutoPublico` con cotización
+- [x] 8.4 Pruebas de `aAutoPublico` con cotización
   - **Criterio(s)**: Requisitos 3.1, 4.2
   - `lib/dominio/transformaciones.test.ts`: con cotización, el resultado nunca incluye WhatsApp ni `auto_id`; la nota solo aparece si la cotización la tiene.
 
-- [ ] 8.5 Pruebas de la descripción del estado
+- [x] 8.5 Pruebas de la descripción del estado
   - **Criterio(s)**: Requisitos 3.1, 4.1
   - `lib/dominio/estados.test.ts`: `descripcionEstado` da, para "Cotización enviada", el texto del prototipo con cotización pendiente, "Recibimos tu respuesta…" con una decidida y el texto del feature 01 sin cotización; los demás estados conservan los textos del feature 01.
 

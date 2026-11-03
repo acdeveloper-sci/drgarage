@@ -79,3 +79,29 @@ describe("armarMensajeWhatsApp (Property 4)", () => {
     );
   });
 });
+
+describe("armarMensajeWhatsApp con cotización (8.3)", () => {
+  const COTIZACION = { descripcion: "Cambio de discos & pastillas; ñ incluida.", costoCop: 380000, estado: "pendiente" as const };
+
+  it("plantilla de cotización: texto exacto, costo $380.000, prefijo 57 y codificación", () => {
+    const url = armarMensajeWhatsApp(AUTO, SITIO, COTIZACION);
+    expect(url.startsWith("https://wa.me/573001234567?text=")).toBe(true);
+    expect(url.split("?text=")[1]).not.toMatch(/[ &ñÑÍí$:]/);
+    expect(texto(url)).toBe(
+      `Hola Íñigo, en Taller Don Ramiro encontramos una reparación adicional para tu Renault Logan (ÑAB12&): Cambio de discos & pastillas; ñ incluida. Costo: $380.000. Apruébala o recházala aquí: ${ENLACE}`,
+    );
+  });
+
+  it("con pendiente usa la plantilla de cotización en cualquier estado del auto", () => {
+    for (const estado of ESTADOS) expect(texto(armarMensajeWhatsApp({ ...AUTO, estado }, SITIO, COTIZACION))).toContain("Apruébala o recházala aquí:");
+  });
+
+  it("sin cotización pendiente, el mensaje es el del feature 01", () => {
+    fc.assert(
+      fc.property(fc.constantFrom(...ESTADOS), fc.constantFrom("aprobada", "rechazada", "anulada") as fc.Arbitrary<"aprobada" | "rechazada" | "anulada">, (estado, estadoCotizacion) => {
+        const auto = { ...AUTO, estado };
+        expect(armarMensajeWhatsApp(auto, SITIO, { ...COTIZACION, estado: estadoCotizacion })).toBe(armarMensajeWhatsApp(auto, SITIO));
+      }),
+    );
+  });
+});

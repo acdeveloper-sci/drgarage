@@ -1,7 +1,8 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { ESTADOS } from "./estados";
-import type { Auto } from "./tipos";
+import { ESTADOS_COTIZACION } from "./cotizaciones";
+import type { Auto, Cotizacion } from "./tipos";
 import { aAutoPublico } from "./transformaciones";
 
 const autoArbitrario: fc.Arbitrary<Auto> = fc.record(
@@ -60,5 +61,51 @@ describe("aAutoPublico (Property 3)", () => {
       actualizadoEn: new Date("2026-11-02T15:42:00Z"),
     };
     expect(aAutoPublico(auto).primerNombre).toBe("Luisa");
+  });
+});
+
+describe("aAutoPublico con cotización (8.4)", () => {
+  const cotizacionArbitraria: fc.Arbitrary<Cotizacion> = fc.record(
+    {
+      id: fc.uuid(),
+      autoId: fc.uuid(),
+      descripcion: fc.string(),
+      costoCop: fc.integer({ min: 1, max: 100_000_000 }),
+      estado: fc.constantFrom(...ESTADOS_COTIZACION),
+      enviadaEn: fc.date({ noInvalidDate: true }),
+      decididaEn: fc.date({ noInvalidDate: true }),
+      nota: fc.string({ minLength: 1 }),
+    },
+    { requiredKeys: ["id", "autoId", "descripcion", "costoCop", "estado", "enviadaEn"] },
+  );
+
+  it("nunca incluye WhatsApp ni auto_id; la nota solo si la cotización la tiene", () => {
+    fc.assert(
+      fc.property(autoArbitrario, cotizacionArbitraria, (auto, ultimaCotizacion) => {
+        const publico = aAutoPublico({ ...auto, ultimaCotizacion });
+        expect(JSON.stringify(publico)).not.toContain(auto.whatsapp);
+        expect(publico).not.toHaveProperty("whatsapp");
+        if (ultimaCotizacion.estado === "anulada") {
+          expect(publico).not.toHaveProperty("cotizacion");
+          return;
+        }
+        const c = publico.cotizacion as unknown as Record<string, unknown>;
+        expect(c).not.toHaveProperty("autoId");
+        expect(Object.values(c)).not.toContain(ultimaCotizacion.autoId);
+        const esperadas = ["costoCop", "descripcion", "enviadaEn", "estado", "id"];
+        if (ultimaCotizacion.decididaEn) esperadas.push("decididaEn");
+        if (ultimaCotizacion.nota) esperadas.push("nota");
+        expect(Object.keys(c).sort()).toEqual(esperadas.sort());
+        if (ultimaCotizacion.nota) expect(c.nota).toBe(ultimaCotizacion.nota);
+      }),
+    );
+  });
+
+  it("sin cotización no agrega la clave", () => {
+    fc.assert(
+      fc.property(autoArbitrario, (auto) => {
+        expect(aAutoPublico(auto)).not.toHaveProperty("cotizacion");
+      }),
+    );
   });
 });
