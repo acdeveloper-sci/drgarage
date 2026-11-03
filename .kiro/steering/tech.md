@@ -43,7 +43,7 @@
 - Lógica de negocio pura (estados, normalización de WhatsApp, armado de mensajes) se prueba con **Vitest**.
 - Las reglas de negocio viven en `lib/dominio/`.
 
-## Reglas de AGENTS.md
+## Reglas técnicas del producto
 
 - Fechas en UTC en la base de datos; mostradas en `America/Bogota` (locale `es-CO`).
 - Token público aleatorio de al menos 128 bits.

@@ -1,8 +1,6 @@
-# AGENTS.md — Taller Don Ramiro
+# Contexto del MVP — drGarage
 
 > Para el feature en curso (01) manda la spec de `.kiro/specs/001-seguimiento-por-enlace/`; `docs/especificacion.md` es referencia del MVP completo, no un encargo. Las reglas de otros features (código del taller, entrega, cotizaciones, fotos) no se implementan en este feature. Donde esta nota contradiga la sección 'Fuentes de verdad', gana esta nota.
-
-Contexto permanente para cualquier agente de código que trabaje en este repositorio.
 
 ## Producto
 
