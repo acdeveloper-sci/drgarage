@@ -1,8 +1,10 @@
+import { formatearCostoCop } from "./cotizaciones";
 import { ETIQUETAS_ESTADO } from "./estados";
 import { NOMBRE_TALLER } from "./taller";
-import type { Auto } from "./tipos";
+import type { Auto, Cotizacion } from "./tipos";
 
 export type DatosMensaje = Pick<Auto, "nombreCliente" | "whatsapp" | "modelo" | "placa" | "estado" | "tokenPublico">;
+export type DatosCotizacionMensaje = Pick<Cotizacion, "descripcion" | "costoCop" | "estado">;
 
 export function primerNombre(nombreCliente: string): string {
   return nombreCliente.trim().split(/\s+/)[0];
@@ -14,9 +16,13 @@ export function enlaceDelAuto(urlSitio: string, tokenPublico: string): string {
 }
 
 // Textos del prototipo (design/prototipo/prototipo.html, waMessage).
-function textoMensaje(auto: DatosMensaje, enlace: string): string {
+// Con una cotización pendiente manda el mensaje de cotización, sea cual sea el estado del auto.
+function textoMensaje(auto: DatosMensaje, enlace: string, cotizacion?: DatosCotizacionMensaje): string {
   const saludo = `Hola ${primerNombre(auto.nombreCliente)}`;
   const vehiculo = `${auto.modelo} (${auto.placa})`;
+  if (cotizacion?.estado === "pendiente") {
+    return `${saludo}, en ${NOMBRE_TALLER} encontramos una reparación adicional para tu ${vehiculo}: ${cotizacion.descripcion} Costo: ${formatearCostoCop(cotizacion.costoCop)}. Apruébala o recházala aquí: ${enlace}`;
+  }
   switch (auto.estado) {
     case "recibido":
       return `${saludo}, recibimos tu ${vehiculo} en ${NOMBRE_TALLER}. Sigue el avance aquí: ${enlace}`;
@@ -28,7 +34,8 @@ function textoMensaje(auto: DatosMensaje, enlace: string): string {
 }
 
 // Devuelve la URL https://wa.me/57{whatsapp}?text=... con el mensaje codificado.
-export function armarMensajeWhatsApp(auto: DatosMensaje, urlSitio: string): string {
-  const texto = textoMensaje(auto, enlaceDelAuto(urlSitio, auto.tokenPublico));
+// La cotización solo cambia el mensaje si está pendiente; decidida o anulada se ignora.
+export function armarMensajeWhatsApp(auto: DatosMensaje, urlSitio: string, cotizacion?: DatosCotizacionMensaje): string {
+  const texto = textoMensaje(auto, enlaceDelAuto(urlSitio, auto.tokenPublico), cotizacion);
   return `https://wa.me/57${auto.whatsapp}?text=${encodeURIComponent(texto)}`;
 }

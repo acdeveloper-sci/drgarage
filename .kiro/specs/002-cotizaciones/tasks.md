@@ -36,27 +36,27 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 2. Lógica de dominio
 
-- [ ] 2.1 Estados y reglas de la cotización
+- [x] 2.1 Estados y reglas de la cotización
   - **Criterio(s)**: Requisito 5.1
   - Crear `lib/dominio/cotizaciones.ts` con `ESTADOS_COTIZACION`, `EstadoCotizacion`, `DecisionCotizacion`, `ATAJOS_NOTA` (con tildes), `esEstadoCotizacion`, `transicionValida` (solo se sale de pendiente), `esFinal` y `resolverDecision`.
 
-- [ ] 2.2 Costo, validación y nota
+- [x] 2.2 Costo, validación y nota
   - **Criterio(s)**: Requisitos 1.1, 1.3, 2.1, 4.1
   - En el mismo módulo: `parsearCosto`, `formatearCostoCop`, `validarCotizacion` y `validarNota`, como en la sección 2.1 del diseño. Los mensajes de error son los del prototipo ("Escribe la descripción de la reparación." y "Escribe el costo en pesos, solo números."); el costo sigue la regla del diseño y rechaza "380,5".
 
-- [ ] 2.3 Tipos del dominio
+- [x] 2.3 Tipos del dominio
   - **Criterio(s)**: Requisitos 1.1, 3.1, 4.2, 5.2
   - En `lib/dominio/tipos.ts`: `Cotizacion`, `CotizacionPublica`, `Auto.ultimaCotizacion`, `AutoPublico.cotizacion` y los tipos de evento `cotizacion_creada` y `cotizacion_decidida`.
 
-- [ ] 2.4 Mensaje de WhatsApp con cotización
+- [x] 2.4 Mensaje de WhatsApp con cotización
   - **Criterio(s)**: Requisito 2.1
   - En `lib/dominio/mensajes.ts`, `armarMensajeWhatsApp` acepta opcionalmente la cotización pendiente y usa la plantilla de la sección 2.3 del diseño, con `formatearCostoCop` y codificada con `encodeURIComponent`. Sin cotización pendiente conserva el mensaje del feature 01.
 
-- [ ] 2.5 Transformación `aAutoPublico` con cotización
+- [x] 2.5 Transformación `aAutoPublico` con cotización
   - **Criterio(s)**: Requisitos 3.1, 4.2
   - En `lib/dominio/transformaciones.ts`, `aAutoPublico` incluye `cotizacion` (solo los campos de `CotizacionPublica`) y sigue sin exponer WhatsApp, `auto_id` ni la nota.
 
-- [ ] 2.6 Descripción del estado según la cotización
+- [x] 2.6 Descripción del estado según la cotización
   - **Criterio(s)**: Requisitos 3.1, 4.1
   - En `lib/dominio/estados.ts`, `descripcionEstado(estado, hayCotizacionPendiente)` como en la sección 2.4 del diseño: para "Cotización enviada", con pendiente "Hay una reparación adicional esperando tu aprobación." y sin ella "El taller está revisando una reparación adicional para tu vehículo."; los demás estados conservan los textos del feature 01.
 
