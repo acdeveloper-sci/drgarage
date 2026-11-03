@@ -172,15 +172,15 @@ Este plan implementa el feature de seguimiento por enlace para drGarage. Las tar
 
 ### 7. Verificación Visual y Final
 
-- [ ] 7.1 Verificar contra diseño del taller
+- [x] 7.1 Verificar contra diseño del taller
   - **Criterio(s)**: Requisitos 1.1, 2.1, 3.1
   - Verificar que la implementación coincide con los mockups en `design/pantallas/03` a `07`. Vista a 390 px de ancho. Colores de estados correctos. Botón WhatsApp con ícono verde.
 
-- [ ] 7.2 Verificar contra diseño del cliente
+- [x] 7.2 Verificar contra diseño del cliente
   - **Criterio(s)**: Requisitos 4.1, 4.2, 4.3
   - Verificar que la implementación coincide con los mockups en `design/pantallas/15` y `17`. Stepper muestra 4 pasos correctamente. Sin exposición de WhatsApp.
 
-- [ ] 7.3 Verificación final de calidad
+- [x] 7.3 Verificación final de calidad
   - **Criterio(s)**: Todos los requisitos
   - Ejecutar `npm run lint`, `npm test` y `npm run build` sin errores. Confirmar que ninguna variable `NEXT_PUBLIC_` contiene claves secretas y que `.env.local` no está en el repositorio.
 
