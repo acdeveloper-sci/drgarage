@@ -2,7 +2,7 @@
 
 Car status tracking and repair-quote approval for a small auto repair shop. Mechanics register cars and update their status from a phone; clients follow progress through a private link and approve or reject extra repairs, with the date and time on record. No app or sign-up for clients.
 
-**Live demo:** https://drgarage.vercel.app
+**Live demo:** https://drgarage.vercel.app/conoce
 **Demo client links:** `/auto/demo-recibido`, `/auto/demo-en-proceso`, `/auto/demo-cotizacion` (pending quote: try Approve or Reject), `/auto/demo-listo`
 
 > The shop view (`/`) has no access control in this version. Use demo data only.
@@ -28,6 +28,10 @@ Small independent auto repair shops (2 to 8 mechanics) in mid-size Colombian cit
 - The client approves or rejects from the same link; a rejection takes an optional note (up to 140 characters, with quick options)
 - The decision is final: it is validated on the server, repeating it changes nothing, and a token from another car cannot touch the quote
 - Quote history with decision date and the client's note on the car page, and quote chips in the car list
+
+**Landing page (for the ICP)**
+
+- Public page at `/conoce` for shop owners: what drGarage does, how it works and a link to the demo
 
 ## Success metrics (pilot)
 
