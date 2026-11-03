@@ -166,15 +166,15 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 9. Verificación
 
-- [ ] 9.1 Verificar la interfaz contra las capturas
+- [!] 9.1 Verificar la interfaz contra las capturas
   - **Criterio(s)**: Requisitos 1 a 5
   - A 390 px, comparar con `design/pantallas/` 08 a 12: formulario, historial, lista con indicadores, página del cliente (pendiente, aprobada y rechazada) y el mensaje de WhatsApp.
 
-- [ ] 9.2 Verificar el flujo contra Supabase
+- [x] 9.2 Verificar el flujo contra Supabase
   - **Criterio(s)**: Requisitos 1 a 5
   - Con datos de ejemplo y limpiando lo que se cree: crear una cotización, crear otra (la primera queda anulada), aprobar, rechazar con nota, repetir una decisión (devuelve el estado existente) y decidir con un token que no corresponde al auto (no modifica nada).
 
-- [ ] 9.3 Verificación final de calidad
+- [x] 9.3 Verificación final de calidad
   - **Criterio(s)**: Todos los requisitos
   - `npm run lint`, `npm test` (incluye las pruebas del feature 01) y `npm run build` sin errores; las rutas de datos siguen dinámicas; ninguna variable `NEXT_PUBLIC_` contiene claves; `.env.local` no está en el repositorio.
 
