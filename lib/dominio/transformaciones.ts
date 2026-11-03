@@ -1,8 +1,8 @@
 import { primerNombre } from "./mensajes";
 import type { Auto, AutoPublico, Cotizacion, CotizacionPublica } from "./tipos";
 
-// Copia campo por campo (sin spread) para que la nota y el auto_id nunca lleguen al cliente.
-function aCotizacionPublica(cotizacion: Cotizacion): CotizacionPublica {
+// Copia campo por campo (sin spread) para que el auto_id nunca llegue al cliente.
+export function aCotizacionPublica(cotizacion: Cotizacion): CotizacionPublica {
   const publica: CotizacionPublica = {
     id: cotizacion.id,
     descripcion: cotizacion.descripcion,
@@ -11,6 +11,7 @@ function aCotizacionPublica(cotizacion: Cotizacion): CotizacionPublica {
     enviadaEn: cotizacion.enviadaEn,
   };
   if (cotizacion.decididaEn) publica.decididaEn = cotizacion.decididaEn;
+  if (cotizacion.nota) publica.nota = cotizacion.nota;
   return publica;
 }
 

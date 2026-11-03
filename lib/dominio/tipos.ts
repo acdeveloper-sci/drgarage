@@ -15,8 +15,9 @@ export interface Cotizacion {
   nota?: string; // Solo si fue rechazada
 }
 
-// Lo único que la página del cliente recibe de una cotización (sin nota ni auto_id).
-export type CotizacionPublica = Pick<Cotizacion, "id" | "descripcion" | "costoCop" | "estado" | "enviadaEn" | "decididaEn">;
+// Lo único que la página del cliente recibe de una cotización (sin auto_id). Incluye la nota:
+// la escribió el propio cliente y la captura 11 se la muestra ("Tu nota").
+export type CotizacionPublica = Pick<Cotizacion, "id" | "descripcion" | "costoCop" | "estado" | "enviadaEn" | "decididaEn" | "nota">;
 
 export interface Auto {
   id: string;

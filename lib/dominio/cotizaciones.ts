@@ -77,3 +77,9 @@ export function validarNota(texto: string): ResultadoNota {
   if (!nota) return { ok: true };
   return [...nota].length <= MAXIMO_NOTA ? { ok: true, nota } : { ok: false };
 }
+
+// Texto del evento de actividad cuando el cliente decide (textos del prototipo).
+export function textoEventoDecision(estado: "aprobada" | "rechazada", nota?: string): string {
+  if (estado === "aprobada") return "Cliente aprobó la cotización";
+  return nota ? `Cliente rechazó la cotización: “${nota}”` : "Cliente rechazó la cotización";
+}

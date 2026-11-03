@@ -52,7 +52,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
   - **Criterio(s)**: Requisito 2.1
   - En `lib/dominio/mensajes.ts`, `armarMensajeWhatsApp` acepta opcionalmente la cotización pendiente y usa la plantilla de la sección 2.3 del diseño, con `formatearCostoCop` y codificada con `encodeURIComponent`. Sin cotización pendiente conserva el mensaje del feature 01.
 
-- [ ] 2.5 Transformación `aAutoPublico` con cotización
+- [x] 2.5 Transformación `aAutoPublico` con cotización
   - **Criterio(s)**: Requisitos 3.1, 4.2
   - En `lib/dominio/transformaciones.ts`, `aAutoPublico` incluye `cotizacion` (solo los campos de `CotizacionPublica`, con la nota del cliente) y sigue sin exponer WhatsApp ni `auto_id`.
 
@@ -80,11 +80,11 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 4. Acciones del servidor
 
-- [-] 4.1 Acción del taller: crear cotización
+- [x] 4.1 Acción del taller: crear cotización
   - **Criterio(s)**: Requisitos 1.1, 1.2, 1.3
   - En `app/(taller)/acciones.ts`, con el mismo patrón del formulario de ingreso: valida con `validarCotizacion` (errores por campo y valores conservados), comprueba que el auto existe, llama a `crearCotizacion`, registra el evento `cotizacion_creada`, pasa el auto a "Cotización enviada" con `actualizarEstado` y revalida `/`, `/autos/{id}` y `/auto/{token}`.
 
-- [ ] 4.2 Acción del cliente: decidir cotización
+- [x] 4.2 Acción del cliente: decidir cotización
   - **Criterio(s)**: Requisitos 3.1, 4.1, 5.1
   - Crear `app/auto/[token]/acciones.ts`. Valida que la decisión sea `aprobar` o `rechazar`, que el token corresponda a un auto y que la cotización pertenezca a ese auto (si no, no modifica nada y devuelve la cotización actual del auto del token, nunca la de otro auto; un token inexistente da el enlace inactivo); valida la nota si rechaza; ejecuta `decidirCotizacion`; si se aplicó, registra `cotizacion_decidida` con los textos del prototipo ("Cliente aprobó la cotización" / "Cliente rechazó la cotización: “{nota}”") y revalida las tres rutas; si no se aplicó, devuelve la cotización existente sin error.
 

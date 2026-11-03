@@ -1,9 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { formatearCostoCop, validarCotizacion } from "@/lib/dominio/cotizaciones";
 import { ETIQUETAS_ESTADO, esEstado } from "@/lib/dominio/estados";
 import { ERROR_WHATSAPP, normalizarPlaca, validarWhatsApp } from "@/lib/dominio/normalizacion";
-import { actualizarEstado, insertarAuto, insertarEvento } from "@/lib/supabase/consultas";
+import {
+  actualizarEstado,
+  crearCotizacion as guardarCotizacion,
+  insertarAuto,
+  insertarEvento,
+  obtenerAutoPorId,
+} from "@/lib/supabase/consultas";
 import { leerValores, type EstadoIngreso } from "./ingreso";
 import { ERROR_CONEXION, ERROR_OBLIGATORIOS } from "./textos";
 
@@ -65,5 +72,56 @@ export async function registrarAviso(id: string): Promise<void> {
     revalidatePath(`/autos/${id}`);
   } catch (error) {
     console.error(error);
+  }
+}
+
+// ---- Cotización adicional ----
+
+export interface ValoresCotizacion {
+  descripcion: string;
+  costo: string;
+}
+
+// Solo tipos: un archivo "use server" no puede exportar valores que no sean funciones asíncronas.
+export type EstadoFormularioCotizacion =
+  | { tipo: "inicial"; valores: ValoresCotizacion }
+  | { tipo: "error"; valores: ValoresCotizacion; errores: { descripcion?: string; costo?: string }; conexion: false }
+  | { tipo: "error"; valores: ValoresCotizacion; error: string; conexion: true }
+  | { tipo: "guardado"; valores: ValoresCotizacion };
+
+// Devuelve lo escrito en cada error para que el formulario lo conserve. Anula la pendiente anterior,
+// crea la nueva, registra el evento y pasa el auto a "Cotización enviada".
+export async function crearCotizacion(
+  autoId: string,
+  _previo: EstadoFormularioCotizacion,
+  datos: FormData,
+): Promise<EstadoFormularioCotizacion> {
+  const valores: ValoresCotizacion = { descripcion: String(datos.get("descripcion") ?? ""), costo: String(datos.get("costo") ?? "") };
+  const validacion = validarCotizacion(valores);
+  if (!validacion.ok) return { tipo: "error", valores, errores: validacion.errores, conexion: false };
+
+  const conexion = { tipo: "error", valores, error: ERROR_CONEXION, conexion: true } as const;
+  try {
+    const auto = await obtenerAutoPorId(autoId);
+    if (!auto) return conexion;
+    await guardarCotizacion(auto.id, validacion.descripcion, validacion.costoCop);
+
+    // Si solo falla el evento, la cotización ya existe: se sigue para no dejar el auto sin su estado.
+    try {
+      await insertarEvento(auto.id, "cotizacion_creada", `Cotización enviada: ${formatearCostoCop(validacion.costoCop)}`);
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Si esto falla, el reintento anula la cotización recién creada y crea otra: nunca quedan dos pendientes.
+    if (!(await actualizarEstado(auto.id, "cotizacion"))) return conexion;
+
+    revalidatePath("/");
+    revalidatePath(`/autos/${auto.id}`);
+    revalidatePath(`/auto/${auto.tokenPublico}`);
+    return { tipo: "guardado", valores };
+  } catch (error) {
+    console.error(error); // incluye ErrorCotizacionSimultanea: reintentar es seguro
+    return conexion;
   }
 }
