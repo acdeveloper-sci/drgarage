@@ -62,19 +62,19 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 3. Acceso a datos
 
-- [ ] 3.1 Crear cotización y mapeo de filas
+- [x] 3.1 Crear cotización y mapeo de filas
   - **Criterio(s)**: Requisitos 1.1, 1.2
   - En `lib/supabase/consultas.ts`: `aCotizacion` (mapeo único de filas a tipos de dominio, fechas como `Date`) y `crearCotizacion(autoId, descripcion, costoCop)`, que anula la pendiente del auto y luego inserta la nueva. Si el insert choca con el índice único, devuelve un error para reintentar.
 
-- [ ] 3.2 Consultas de lectura de cotizaciones
+- [x] 3.2 Consultas de lectura de cotizaciones
   - **Criterio(s)**: Requisitos 4.2, 5.2
   - `listarCotizaciones(autoId)` (la más reciente primero) y `obtenerCotizacionPorId(id)` (devuelve `null` si no existe o si el id no es uuid).
 
-- [ ] 3.3 Decidir cotización con update condicionado
+- [x] 3.3 Decidir cotización con update condicionado
   - **Criterio(s)**: Requisitos 3.1, 4.1, 5.1
   - `decidirCotizacion(cotizacionId, autoId, estadoNuevo, nota?)` con un único `update` con `where id = … and auto_id = … and estado = 'pendiente'` que devuelve la fila; si no actualiza ninguna, lee y devuelve la existente. `decidida_en` se escribe en UTC desde la función. Incluye una consulta interna que resuelve el id del auto a partir del token y devuelve solo el id.
 
-- [ ] 3.4 Consultas existentes con cotización
+- [x] 3.4 Consultas existentes con cotización
   - **Criterio(s)**: Requisitos 3.1, 3.2, 4.2
   - `obtenerAutoPorId` incluye `ultimaCotizacion`; `listarAutos` incluye `ultimaCotizacion` de cada auto con una sola consulta adicional para toda la lista; `obtenerAutoPorToken` incluye `cotizacion` solo con los campos de `CotizacionPublica`; `listarEventos` y `aEvento` aceptan los tipos de evento nuevos.
 
