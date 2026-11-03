@@ -166,7 +166,7 @@ Este plan implementa el feature 02 de drGarage sobre el feature 01 ya desplegado
 
 ### 9. Verificación
 
-- [!] 9.1 Verificar la interfaz contra las capturas
+- [x] 9.1 Verificar la interfaz contra las capturas
   - **Criterio(s)**: Requisitos 1 a 5
   - A 390 px, comparar con `design/pantallas/` 08 a 12: formulario, historial, lista con indicadores, página del cliente (pendiente, aprobada y rechazada) y el mensaje de WhatsApp.
 
